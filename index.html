@@ -107,6 +107,9 @@ table{width:100%;border-collapse:collapse}th{background:#F8FAFC;padding:11px 20p
 <div class="nav-label">Finance</div><div class="nav-item" onclick="go('accounting',this)"><span class="nav-icon">💲</span>Accounting</div>
 <div class="nav-label">System</div><div class="nav-item" id="nav-users" onclick="go('users',this)"><span class="nav-icon">👤</span>User Management</div><div class="nav-item" id="nav-activity" onclick="go('activity',this)"><span class="nav-icon">📋</span>Activity Log</div><div class="nav-item" onclick="go('settings',this)"><span class="nav-icon">⚙️</span>Settings</div><div class="nav-section-title" style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.3);padding:10px 10px 4px;margin-top:4px">Phase 3</div><div class="nav-item" onclick="go('attendance',this)"><span class="nav-icon">⏰</span>Clock In / Out</div><div class="nav-item" onclick="go('roster',this)"><span class="nav-icon">🗓️</span>Roster & Shifts</div><div class="nav-item" onclick="go('leaves',this)"><span class="nav-icon">🌴</span>Leave Management</div><div class="nav-item" onclick="go('payroll-auto',this)"><span class="nav-icon">🤖</span>Payroll Automation</div><div class="nav-item" onclick="go('clients',this)"><span class="nav-icon">🏢</span>Clients</div>
 <div class="nav-item" onclick="go('reports',this)"><span class="nav-icon">�ퟘ</span>Reports</div>
+<div class="nav-item" onclick="go('client-portal',this)" id="nav-client-portal"><span class="nav-icon">🌐</span>Client Portal</div>
+<div class="nav-item" onclick="go('inbox',this)" id="nav-inbox"><span class="nav-icon">📬</span>Inbox <span id="inbox-badge" style="background:#ef4444;color:#fff;border-radius:9999px;padding:1px 6px;font-size:11px;margin-left:4px;display:none">0</span></div>
+<div class="nav-item" onclick="go('chat',this)" id="nav-chat"><span class="nav-icon">💬</span>Chat</div>
 </nav>
 <div class="sidebar-footer"><div class="user-pill"><div class="user-avatar" id="sidebar-avatar">K</div><div class="user-info"><div class="user-name" id="sidebar-name">Karim</div><div class="user-role" id="sidebar-role">Super Admin</div></div><button class="logout-btn" onclick="logout()">↻</button></div></div>
 </aside>
@@ -130,7 +133,13 @@ table{width:100%;border-collapse:collapse}th{background:#F8FAFC;padding:11px 20p
 <div id="page-accounting" class="module-page"><div class="acct-grid"><div class="acct-card"><div class="stat-label">Total Income</div><div class="acct-amount" style="color:var(--success)" id="acct-income">$0</div></div><div class="acct-card"><div class="stat-label">Total Expenses</div><div class="acct-amount" style="color:var(--danger)" id="acct-expense">$0</div></div><div class="acct-card"><div class="stat-label">Net Profit</div><div class="acct-amount" id="acct-profit" style="color:var(--success)">$0</div></div></div><div class="table-wrap"><div class="table-head"><div class="table-title">Transactions</div></div><div id="accounting-body"><div class="loading">Loading...</div></div></div></div>
 <div id="page-users" class="module-page"><div class="table-wrap"><div class="table-head"><div class="table-title">User Management</div></div><div id="users-body"><div class="loading">Loading...</div></div></div></div>
 <div id="page-activity" class="module-page"><div class="table-wrap"><div class="table-head"><div class="table-title">Activity Log</div></div><div id="activity-body"><div class="loading">Loading...</div></div></div></div>
-<div id="page-settings" class="module-page"><div class="widget"><div class="widget-title">System Settings</div><div style="padding:20px 0"><div class="form-group"><div class="form-label">Company Name</div><input type="text" class="form-control" value="CoreAxis One" style="max-width:400px"></div><div class="form-group"><div class="form-label">Admin Email</div><input type="email" class="form-control" id="settings-email" style="max-width:400px" readonly></div><div class="form-group"><div class="form-label">Currency</div><select class="form-control" style="max-width:400px"><option>USD — US Dollar</option><option>AED — UAE Dirham</option><option>EUR — Euro</option></select></div><button class="btn-save" style="margin-top:8px" onclick="showToast('Settings saved')">Save Settings</button></div><div class="password-section"><div class="widget-title" style="margin-bottom:16px">Change Password</div><div class="form-group" style="max-width:400px"><div class="form-label">New Password</div><input type="password" class="form-control" id="new-password" placeholder="Min 6 characters"></div><div class="form-group" style="max-width:400px"><div class="form-label">Confirm Password</div><input type="password" class="form-control" id="confirm-password" placeholder="Repeat new password"></div><button class="btn-save" onclick="changePassword()">Update Password</button></div></div></div>
+<div id="page-settings" class="module-page"><div class="widget"><div class="widget-title">System Settings</div><div style="padding:20px 0"><div class="form-group"><div class="form-label">Company Name</div><input type="text" class="form-control" value="CoreAxis One" style="max-width:400px"></div><div class="form-group"><div class="form-label">Admin Email</div><input type="email" class="form-control" id="settings-email" style="max-width:400px" readonly></div><div class="form-group"><div class="form-label">Currency</div><select class="form-control" style="max-width:400px"><option>USD — US Dollar</option><option>AED — UAE Dirham</option><option>EUR — Euro</option></select></div><button class="btn-save" style="margin-top:8px" onclick="showToast('Settings saved')">Save Settings</button></div><div class="password-section"><div class="widget-title" style="margin-bottom:16px">Change Password</div><div class="form-group" style="max-width:400px"><div class="form-label">New Password</div><input type="password" class="form-control" id="new-password" placeholder="Min 6 characters"></div><div class="form-group" style="max-width:400px"><div class="form-label">Confirm Password</div><input type="password" class="form-control" id="confirm-password" placeholder="Repeat new password"></div><button class="btn-save" onclick="changePassword()">Update Password</button></div></div><div class="card" style="margin-top:24px">
+<div class="card-title" style="margin-bottom:16px">Email Logs <span style="font-size:13px;font-weight:400;color:var(--muted)">(Last 20 sent)</span></div>
+<div id="email-logs-container" style="border:1.5px solid var(--border);border-radius:10px;overflow:hidden">
+<div style="padding:20px;text-align:center;color:var(--muted)">Loading...</div>
+</div>
+<button onclick="loadEmailLogs()" style="margin-top:12px;padding:8px 18px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;cursor:pointer">Refresh Logs</button>
+</div></div>
 </div></main></div></div>
 <div class="modal-overlay" id="lead-modal"><div class="modal-card"><button class="close-btn" onclick="closeModal('lead-modal')">•</button><div class="modal-title">Add New Lead</div><div class="form-row"><div class="form-group"><label class="form-label">First Name</label><input type="text" class="form-control" id="l-fname"></div><div class="form-group"><label class="form-label">Last Name</label><input type="text" class="form-control" id="l-lname"></div></div><div class="form-group"><label class="form-label">Company</label><input type="text" class="form-control" id="l-company"></div><div class="form-group"><label class="form-label">Email</label><input type="email" class="form-control" id="l-email"></div><div class="form-group"><label class="form-label">Phone</label><input type="text" class="form-control" id="l-phone"></div><div class="form-row"><div class="form-group"><label class="form-label">Status</label><select class="form-control" id="l-status"><option value="new">New</option><option value="contacted">Contacted</option><option value="qualified">Qualified</option><option value="proposal">Proposal</option><option value="closed_won">Closed Won</option><option value="closed_lost">Closed Lost</option></select></div><div class="form-group"><label class="form-label">Deal Value (USD)</label><input type="number" class="form-control" id="l-value"></div></div><div class="form-group"><label class="form-label">Notes</label><textarea class="form-control" id="l-notes" rows="2"></textarea></div><div class="form-actions"><button class="btn-cancel" onclick="closeModal('lead-modal')">Cancel</button><button class="btn-save" onclick="saveLead()">Save Lead</button></div></div></div>
 <div class="modal-overlay" id="agent-modal"><div class="modal-card"><button class="close-btn" onclick="closeModal('agent-modal')">•</button><div class="modal-title">Add New Agent</div><div class="form-row"><div class="form-group"><label class="form-label">First Name</label><input type="text" class="form-control" id="a-fname"></div><div class="form-group"><label class="form-label">Last Name</label><input type="text" class="form-control" id="a-lname"></div></div><div class="form-group"><label class="form-label">Email</label><input type="email" class="form-control" id="a-email"></div><div class="form-row"><div class="form-group"><label class="form-label">Role</label><select class="form-control" id="a-role"><option value="agent">Agent</option><option value="senior_agent">Senior Agent</option><option value="team_lead">Team Lead</option><option value="supervisor">Supervisor</option><option value="manager">Manager</option></select></div><div class="form-group"><label class="form-label">Department</label><select class="form-control" id="a-dept"><option value="customer_service">Customer Service</option><option value="sales">Sales</option><option value="technical">Technical Support</option><option value="billing">Billing</option><option value="hr">HR</option></select></div></div><div class="form-row"><div class="form-group"><label class="form-label">Hourly Rate</label><input type="number" class="form-control" id="a-rate" placeholder="8"></div><div class="form-group"><label class="form-label">Status</label><select class="form-control" id="a-status"><option value="active">Active</option><option value="onboarding">Onboarding</option><option value="inactive">Inactive</option></select></div></div><div class="form-group"><label class="form-label">Start Date</label><input type="date" class="form-control" id="a-start"></div><div class="form-actions"><button class="btn-cancel" onclick="closeModal('agent-modal')">Cancel</button><button class="btn-save" onclick="saveAgent()">Save Agent</button></div></div></div>
@@ -386,6 +395,261 @@ async function loadAgentKPIs(){
     });
   }catch(e){console.error('KPI error',e);}
 }
+
+
+// ===== PHASE 4 FUNCTIONS =====
+
+// Email compose modal
+function openEmailModal(to, subject, body) {
+  to = to || '';
+  subject = subject || '';
+  body = body || '';
+  const existing = document.getElementById('email-compose-modal');
+  if (existing) existing.remove();
+  const m = document.createElement('div');
+  m.id = 'email-compose-modal';
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center';
+  m.innerHTML = '<div style="background:var(--card);border-radius:16px;padding:28px;width:560px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,0.3)">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
+    '<h2 style="font-size:18px;font-weight:700;color:var(--text)">Compose Email</h2>' +
+    '<button onclick="document.getElementById('email-compose-modal').remove()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted)">&times;</button></div>' +
+    '<div style="margin-bottom:14px"><label style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;display:block">To</label>' +
+    '<input id="email-to" type="email" value="' + to + '" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;box-sizing:border-box"></div>' +
+    '<div style="margin-bottom:14px"><label style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;display:block">Subject</label>' +
+    '<input id="email-subject" type="text" value="' + subject + '" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;box-sizing:border-box"></div>' +
+    '<div style="margin-bottom:20px"><label style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;display:block">Message</label>' +
+    '<textarea id="email-body" rows="6" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;resize:vertical;box-sizing:border-box">' + body + '</textarea></div>' +
+    '<div style="display:flex;gap:10px;justify-content:flex-end">' +
+    '<button onclick="document.getElementById('email-compose-modal').remove()" style="padding:10px 20px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:14px;cursor:pointer">Cancel</button>' +
+    '<button onclick="sendEmail()" style="padding:10px 20px;border-radius:8px;border:none;background:var(--primary);color:#fff;font-size:14px;font-weight:600;cursor:pointer">Send Email</button></div></div>';
+  document.body.appendChild(m);
+}
+
+async function sendEmail() {
+  const to = document.getElementById('email-to').value.trim();
+  const subject = document.getElementById('email-subject').value.trim();
+  const body = document.getElementById('email-body').value.trim();
+  if (!to || !subject) { showToast('Please fill in To and Subject','error'); return; }
+  const user = window._currentUser || {};
+  const { error } = await window._sb.from('email_logs').insert([{
+    to_email: to, subject, body, sent_at: new Date().toISOString(), sent_by: user.email || 'unknown'
+  }]);
+  if (error) { showToast('Failed to log email: ' + error.message, 'error'); return; }
+  document.getElementById('email-compose-modal').remove();
+  showToast('Email sent and logged!', 'success');
+}
+
+// CLIENT PORTAL
+async function loadClientPortalClients() {
+  const sel = document.getElementById('portal-client-select');
+  if (!sel) return;
+  const { data } = await window._sb.from('clients').select('id,name').order('name');
+  if (!data) return;
+  data.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.name;
+    opt.textContent = c.name;
+    sel.appendChild(opt);
+  });
+}
+
+async function loadClientPortal() {
+  const sel = document.getElementById('portal-client-select');
+  const clientName = sel ? sel.value : '';
+  const content = document.getElementById('portal-content');
+  if (!clientName) { if (content) content.style.display = 'none'; return; }
+  if (content) content.style.display = 'block';
+
+  // tickets
+  const { data: tickets } = await window._sb.from('tickets').select('subject,status,priority,created_at').eq('client_name', clientName).eq('status','Open').order('created_at', {ascending:false}).limit(20);
+  const tb = document.getElementById('portal-tickets-body');
+  if (tb) tb.innerHTML = (tickets && tickets.length) ? tickets.map(t =>
+    '<tr style="border-bottom:1px solid var(--border)"><td style="padding:10px;font-size:14px;color:var(--text)">' + (t.subject||'—') + '</td>' +
+    '<td style="padding:10px"><span style="padding:3px 10px;border-radius:9999px;font-size:12px;font-weight:600;background:#fef3c7;color:#92400e">' + (t.status||'') + '</span></td>' +
+    '<td style="padding:10px;font-size:14px;color:var(--text)">' + (t.priority||'—') + '</td>' +
+    '<td style="padding:10px;font-size:13px;color:var(--muted)">' + (t.created_at ? new Date(t.created_at).toLocaleDateString() : '—') + '</td></tr>'
+  ).join('') : '<tr><td colspan="4" style="padding:20px;text-align:center;color:var(--muted)">No open tickets</td></tr>';
+
+  // invoices
+  const { data: invoices } = await window._sb.from('invoices').select('invoice_number,amount,status,invoice_date').eq('client_name', clientName).order('invoice_date',{ascending:false}).limit(10);
+  const ib = document.getElementById('portal-invoices-body');
+  if (ib) ib.innerHTML = (invoices && invoices.length) ? invoices.map(inv =>
+    '<tr style="border-bottom:1px solid var(--border)"><td style="padding:10px;font-size:14px;color:var(--text)">' + (inv.invoice_number||'—') + '</td>' +
+    '<td style="padding:10px;font-size:14px;font-weight:600;color:var(--text)">$' + Number(inv.amount||0).toLocaleString() + '</td>' +
+    '<td style="padding:10px"><span style="padding:3px 10px;border-radius:9999px;font-size:12px;font-weight:600;background:' + (inv.status==='Paid'?'#d1fae5;color:#065f46':'#fef3c7;color:#92400e') + '">' + (inv.status||'') + '</span></td>' +
+    '<td style="padding:10px;font-size:13px;color:var(--muted)">' + (inv.invoice_date ? new Date(inv.invoice_date).toLocaleDateString() : '—') + '</td></tr>'
+  ).join('') : '<tr><td colspan="4" style="padding:20px;text-align:center;color:var(--muted)">No invoices found</td></tr>';
+
+  // contracts
+  const { data: contracts } = await window._sb.from('contracts').select('title,value,status,end_date').eq('client_name', clientName).order('end_date',{ascending:true});
+  const cb = document.getElementById('portal-contracts-body');
+  if (cb) cb.innerHTML = (contracts && contracts.length) ? contracts.map(c =>
+    '<tr style="border-bottom:1px solid var(--border)"><td style="padding:10px;font-size:14px;color:var(--text)">' + (c.title||'—') + '</td>' +
+    '<td style="padding:10px;font-size:14px;font-weight:600;color:var(--text)">$' + Number(c.value||0).toLocaleString() + '</td>' +
+    '<td style="padding:10px"><span style="padding:3px 10px;border-radius:9999px;font-size:12px;font-weight:600;background:#d1fae5;color:#065f46">' + (c.status||'Active') + '</span></td>' +
+    '<td style="padding:10px;font-size:13px;color:var(--muted)">' + (c.end_date ? new Date(c.end_date).toLocaleDateString() : '—') + '</td></tr>'
+  ).join('') : '<tr><td colspan="4" style="padding:20px;text-align:center;color:var(--muted)">No contracts found</td></tr>';
+}
+
+// INBOX
+let _inboxData = [];
+let _inboxFilter = 'all';
+
+async function loadInbox() {
+  const { data } = await window._sb.from('messages').select('*').order('created_at',{ascending:false}).limit(100);
+  _inboxData = data || [];
+  renderInbox();
+  updateInboxBadge();
+}
+
+function filterInbox(f) {
+  _inboxFilter = f;
+  ['all','unread','ticket','general'].forEach(t => {
+    const btn = document.getElementById('itab-' + t);
+    if (btn) { btn.style.background = t===f ? 'var(--primary)' : 'var(--card)'; btn.style.color = t===f ? '#fff' : 'var(--text)'; }
+  });
+  renderInbox();
+}
+
+function renderInbox() {
+  const list = document.getElementById('inbox-list');
+  if (!list) return;
+  let msgs = _inboxData;
+  if (_inboxFilter === 'unread') msgs = msgs.filter(m => !m.read);
+  else if (_inboxFilter === 'ticket') msgs = msgs.filter(m => m.type === 'ticket');
+  else if (_inboxFilter === 'general') msgs = msgs.filter(m => m.type === 'general');
+  if (!msgs.length) { list.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">No messages found</div>'; return; }
+  list.innerHTML = msgs.map(m =>
+    '<div onclick="markRead('' + m.id + '')" style="padding:16px 20px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:flex-start;gap:14px;background:' + (m.read?'transparent':'rgba(99,102,241,0.04)') + ';transition:background 0.2s">' +
+    '<div style="width:36px;height:36px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0">' + (m.from_name||'?')[0].toUpperCase() + '</div>' +
+    '<div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">' +
+    '<span style="font-size:14px;font-weight:' + (m.read?'500':'700') + ';color:var(--text)">' + (m.from_name||'Unknown') + '</span>' +
+    '<span style="font-size:12px;color:var(--muted)">' + (m.created_at ? new Date(m.created_at).toLocaleDateString() : '') + '</span></div>' +
+    '<div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px">' + (m.subject||'(no subject)') + '</div>' +
+    '<div style="font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (m.body||'') + '</div></div>' +
+    '<button onclick="event.stopPropagation();openEmailModal('' + (m.from_email||'') + '','Re: ' + (m.subject||'') + '','')" style="padding:6px 12px;border-radius:7px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:12px;cursor:pointer;flex-shrink:0">Reply</button>' +
+    '</div>'
+  ).join('');
+}
+
+async function markRead(id) {
+  await window._sb.from('messages').update({read:true}).eq('id', id);
+  const m = _inboxData.find(x => x.id == id);
+  if (m) m.read = true;
+  renderInbox();
+  updateInboxBadge();
+}
+
+function updateInboxBadge() {
+  const badge = document.getElementById('inbox-badge');
+  if (!badge) return;
+  const count = _inboxData.filter(m => !m.read).length;
+  badge.textContent = count;
+  badge.style.display = count > 0 ? 'inline' : 'none';
+}
+
+// CHAT
+let _chatChannel = 'general';
+let _chatInterval = null;
+
+async function loadChat() {
+  if (_chatInterval) clearInterval(_chatInterval);
+  await renderChatMessages();
+  _chatInterval = setInterval(renderChatMessages, 15000);
+}
+
+async function renderChatMessages() {
+  const { data } = await window._sb.from('chat_messages').select('*').eq('channel', _chatChannel).order('created_at',{ascending:true}).limit(80);
+  const container = document.getElementById('chat-messages');
+  if (!container) return;
+  const user = window._currentUser || {};
+  const myEmail = user.email || '';
+  if (!data || !data.length) { container.innerHTML = '<div style="color:var(--muted);text-align:center;margin-top:auto">No messages yet. Say hi!</div>'; return; }
+  container.innerHTML = data.map(msg => {
+    const isMe = msg.user_id === (user.id || '') || msg.user_name === (user.name || '');
+    return '<div style="display:flex;flex-direction:column;align-items:' + (isMe?'flex-end':'flex-start') + '">' +
+      '<div style="max-width:70%;background:' + (isMe?'var(--primary)':'var(--bg)') + ';color:' + (isMe?'#fff':'var(--text)') + ';border-radius:' + (isMe?'16px 16px 4px 16px':'16px 16px 16px 4px') + ';padding:10px 14px;font-size:14px">' +
+      (!isMe ? '<div style="font-size:11px;font-weight:700;opacity:0.7;margin-bottom:3px">' + (msg.user_name||'User') + '</div>' : '') +
+      (msg.message||'') + '</div>' +
+      '<div style="font-size:11px;color:var(--muted);margin-top:3px;padding:0 4px">' + (msg.created_at ? new Date(msg.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '') + '</div>' +
+      '</div>';
+  }).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+async function sendChatMessage() {
+  const input = document.getElementById('chat-input');
+  if (!input) return;
+  const message = input.value.trim();
+  if (!message) return;
+  const user = window._currentUser || {};
+  await window._sb.from('chat_messages').insert([{
+    user_id: user.id || null,
+    user_name: user.name || user.email || 'Unknown',
+    message,
+    created_at: new Date().toISOString(),
+    channel: _chatChannel
+  }]);
+  input.value = '';
+  await renderChatMessages();
+}
+
+function switchChannel(ch) {
+  _chatChannel = ch;
+  ['general','support','management'].forEach(c => {
+    const btn = document.getElementById('ch-' + c);
+    if (btn) { btn.style.background = c===ch?'var(--primary)':'var(--card)'; btn.style.color = c===ch?'#fff':'var(--text)'; btn.style.borderColor = c===ch?'var(--primary)':'var(--border)'; }
+  });
+  renderChatMessages();
+}
+
+// Inject Send Email buttons into Contacts and Helpdesk table rows
+function injectEmailButtons(page) {
+  if (page === 'contacts') {
+    var rows = document.querySelectorAll('#page-contacts .card-row, #page-contacts tr[data-email], #page-contacts tbody tr');
+    rows.forEach(function(row) {
+      if (row.querySelector('.email-send-btn')) return;
+      var emailCell = row.querySelector('td:nth-child(3)');
+      var emailVal = emailCell ? emailCell.textContent.trim() : '';
+      if (!emailVal || emailVal === '—') return;
+      var btn = document.createElement('button');
+      btn.className = 'email-send-btn';
+      btn.textContent = '📧 Email';
+      btn.style.cssText = 'padding:4px 10px;border-radius:6px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:12px;cursor:pointer;margin-left:6px';
+      btn.onclick = function(e) { e.stopPropagation(); openEmailModal(emailVal, '', ''); };
+      var lastTd = row.querySelector('td:last-child');
+      if (lastTd) lastTd.appendChild(btn);
+    });
+  }
+  if (page === 'helpdesk') {
+    var rows = document.querySelectorAll('#page-helpdesk tbody tr');
+    rows.forEach(function(row) {
+      if (row.querySelector('.email-send-btn')) return;
+      var subjectCell = row.querySelector('td:first-child');
+      var subject = subjectCell ? 'Re: ' + subjectCell.textContent.trim() : 'Support Follow-up';
+      var btn = document.createElement('button');
+      btn.className = 'email-send-btn';
+      btn.textContent = '📧';
+      btn.title = 'Send Email';
+      btn.style.cssText = 'padding:3px 8px;border-radius:6px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:12px;cursor:pointer;margin-left:4px';
+      btn.onclick = function(e) { e.stopPropagation(); openEmailModal('', subject, ''); };
+      var lastTd = row.querySelector('td:last-child');
+      if (lastTd) lastTd.appendChild(btn);
+    });
+  }
+}
+
+
+// Email Logs loader (for Settings page)
+async function loadEmailLogs() {
+  const { data } = await window._sb.from('email_logs').select('*').order('sent_at',{ascending:false}).limit(20);
+  const el = document.getElementById('email-logs-container');
+  if (!el || !data) return;
+  el.innerHTML = data.length ? data.map(e =>
+    '<div style="padding:12px 16px;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:13px;font-weight:600;color:var(--text)">' + (e.subject||'—') + '</span><span style="font-size:12px;color:var(--muted)">' + (e.sent_at?new Date(e.sent_at).toLocaleString():'') + '</span></div><div style="font-size:13px;color:var(--muted)">To: ' + (e.to_email||'') + ' &bull; By: ' + (e.sent_by||'') + '</div></div>'
+  ).join('') : '<div style="padding:20px;text-align:center;color:var(--muted)">No emails sent yet</div>';
+}
+
 </script>
 
 <div id="page-reports" class="page" style="display:none">
@@ -405,4 +669,92 @@ async function loadAgentKPIs(){
 <div class="card"><h3 style="margin-bottom:14px;font-weight:600">Agent Performance</h3><canvas id="chartAgents"></canvas></div>
 </div>
 </div>
+
+<div id="page-client-portal" class="page" style="display:none">
+<div class="page-header" style="margin-bottom:24px"><h1 style="font-size:24px;font-weight:700;color:var(--text)">Client Portal</h1><p style="color:var(--muted);margin-top:4px">View client invoices, tickets, and contracts</p></div>
+<div style="background:var(--card);border-radius:12px;padding:20px;margin-bottom:20px">
+<label style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;display:block">Select Client</label>
+<select id="portal-client-select" onchange="loadClientPortal()" style="width:300px;padding:10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"><option value="">-- Choose a client --</option></select>
+</div>
+<div id="portal-content" style="display:none">
+<div style="background:var(--card);border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-size:16px;font-weight:600;margin-bottom:16px;color:var(--text)">Open Tickets</h3>
+<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse" id="portal-tickets-table">
+<thead><tr style="border-bottom:1.5px solid var(--border)"><th style="text-align:left;padding:10px;font-size:13px;color:var(--muted)">Subject</th><th style="text-align:left;padding:10px;font-size:13px;color:var(--muted)">Status</th><th style="text-align:left;padding:10px;font-size:13px;color:var(--muted)">Priority</th><th style="text-align:left;padding:10px;font-size:13px;color:var(--muted)">Created</th></tr></thead>
+<tbody id="portal-tickets-body"><tr><td colspan="4" style="padding:20px;text-align:center;color:var(--muted)">Select a client above</td></tr></tbody>
+</table></div></div>
+<div style="background:var(--card);border-radius:12px;padding:20px;margin-bottom:20px">
+<h3 style="font-size:16px;font-weight:600;margin-bottom:16px;color:var(--text)">Recent Invoices</h3>
+<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse" id="portal-invoices-table">
+<thead><tr style="border-bottom:1.5px solid var(--border)"><th style="text-align:left;padding:10px;font-size:13px;color:var(--muted)">#</th><th style="text-align:left;padding:10px;font-size:13px;color:var(--muted)">Amount</th><th style="text-align:left;padding:10px;font-size:13px;color:var(--muted)">Status</th><th style="text-align:left;padding:10px;font-size:13px;color:var(--muted)">Date</th></tr></thead>
+<tbody id="portal-invoices-body"><tr><td colspan="4" style="padding:20px;text-align:center;color:var(--muted)">Select a client above</td></tr></tbody>
+</table></div></div>
+<div style="background:var(--card);border-radius:12px;padding:20px">
+<h3 style="font-size:16px;font-weight:600;margin-bottom:16px;color:var(--text)">Active Contracts</h3>
+<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse" id="portal-contracts-table">
+<thead><tr style="border-bottom:1.5px solid var(--border)"><th style="text-align:left;padding:10px;font-size:13px;color:var(--muted)">Contract</th><th style="text-align:left;padding:10px;font-size:13px;color:var(--muted)">Value</th><th style="text-align:left;padding:10px;font-size:13px;color:var(--muted)">Status</th><th style="text-align:left;padding:10px;font-size:13px;color:var(--muted)">End Date</th></tr></thead>
+<tbody id="portal-contracts-body"><tr><td colspan="4" style="padding:20px;text-align:center;color:var(--muted)">Select a client above</td></tr></tbody>
+</table></div></div>
+</div></div>
+
+<div id="page-inbox" class="page" style="display:none">
+<div class="page-header" style="margin-bottom:24px;display:flex;align-items:center;justify-content:space-between">
+<div><h1 style="font-size:24px;font-weight:700;color:var(--text)">Inbox</h1><p style="color:var(--muted);margin-top:4px">Incoming messages and notifications</p></div>
+</div>
+<div style="display:flex;gap:8px;margin-bottom:20px" id="inbox-tabs">
+<button onclick="filterInbox('all')" id="itab-all" style="padding:8px 18px;border-radius:8px;border:1.5px solid var(--border);background:var(--primary);color:#fff;font-size:13px;font-weight:600;cursor:pointer">All</button>
+<button onclick="filterInbox('unread')" id="itab-unread" style="padding:8px 18px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;cursor:pointer">Unread</button>
+<button onclick="filterInbox('ticket')" id="itab-ticket" style="padding:8px 18px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;cursor:pointer">Tickets</button>
+<button onclick="filterInbox('general')" id="itab-general" style="padding:8px 18px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;cursor:pointer">General</button>
+</div>
+<div style="background:var(--card);border-radius:12px;overflow:hidden" id="inbox-list"><div style="padding:40px;text-align:center;color:var(--muted)">Loading messages...</div></div>
+</div>
+
+<div id="page-chat" class="page" style="display:none">
+<div class="page-header" style="margin-bottom:16px"><h1 style="font-size:24px;font-weight:700;color:var(--text)">Team Chat</h1></div>
+<div style="display:flex;gap:8px;margin-bottom:16px">
+<button onclick="switchChannel('general')" id="ch-general" style="padding:6px 14px;border-radius:8px;border:1.5px solid var(--primary);background:var(--primary);color:#fff;font-size:13px;font-weight:600;cursor:pointer"># general</button>
+<button onclick="switchChannel('support')" id="ch-support" style="padding:6px 14px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;cursor:pointer"># support</button>
+<button onclick="switchChannel('management')" id="ch-management" style="padding:6px 14px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13px;cursor:pointer"># management</button>
+</div>
+<div id="chat-messages" style="background:var(--card);border-radius:12px;padding:20px;height:420px;overflow-y:auto;display:flex;flex-direction:column;gap:12px"><div style="color:var(--muted);text-align:center;margin-top:auto">Loading messages...</div></div>
+<div style="display:flex;gap:10px;margin-top:12px">
+<input id="chat-input" type="text" placeholder="Type a message... (Enter to send)" onkeydown="if(event.key==='Enter')sendChatMessage()" style="flex:1;padding:12px 16px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:14px">
+<button onclick="sendChatMessage()" style="padding:12px 20px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">Send</button>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Wrap the router
+  var _origGo = window.go;
+  window.go = function(page, el) {
+    if (typeof _origGo === 'function') _origGo(page, el);
+    if (page === 'client-portal') {
+      loadClientPortalClients();
+      loadClientPortal();
+    }
+    if (page === 'inbox') { loadInbox(); }
+    if (page === 'chat') { loadChat(); }
+    // Inject Send Email buttons into Contacts and Helpdesk after render
+    setTimeout(function() { injectEmailButtons(page); }, 400);
+  };
+
+  // RBAC: hide client portal from agents and team_leads
+  var storedRole = localStorage.getItem('ca_role') || '';
+  var portalNav = document.getElementById('nav-client-portal');
+  if (portalNav && storedRole === 'agent') portalNav.style.display = 'none';
+
+  // Init inbox badge on load
+  (async function() {
+    if (window._sb) {
+      var res = await window._sb.from('messages').select('id,read').eq('read', false);
+      var badge = document.getElementById('inbox-badge');
+      if (badge && res.data) {
+        badge.textContent = res.data.length;
+        badge.style.display = res.data.length > 0 ? 'inline' : 'none';
+      }
+    }
+  })();
+});
+</script>
 </body></html>
