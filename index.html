@@ -119,7 +119,8 @@ table{width:100%;border-collapse:collapse}th{background:#F8FAFC;padding:11px 20p
 <div class="nav-item" onclick="go('workflows',this)" id="nav-workflows"><span class="nav-icon">⚙️</span>Workflows</div>
 <div class="nav-item" onclick="go('followups',this)" id="nav-followups"><span class="nav-icon">🔁</span>Follow-ups</div>
 <div class="nav-item" onclick="go('superadmin',this)" id="nav-superadmin"><span class="nav-icon">🏢</span>Super Admin</div>
-<div class="nav-item" onclick="go('ai-assistant',this)" id="nav-ai-assistant"><span class="nav-icon">🤖</span>AI Assistant</div><div class="nav-item" onclick="go('analytics-ai',this)" id="nav-analytics-ai"><span class="nav-icon">📊</span>AI Analytics</div></nav>
+<div class="nav-item" onclick="go('ai-assistant',this)" id="nav-ai-assistant"><span class="nav-icon">🤖</span>AI Assistant</div><div class="nav-item" onclick="go('analytics-ai',this)" id="nav-analytics-ai"><span class="nav-icon">📊</span>AI Analytics</div><div class="nav-item" onclick="go('kpi',this)" id="nav-kpi"><span class="nav-icon">&#127919;</span>KPI Tracker</div><div class="nav-item" onclick="go('skills',this)" id="nav-skills"><span class="nav-icon">&#129504;</span>Skills Matrix</div><div class="nav-item" onclick="go('overtime',this)" id="nav-overtime"><span class="nav-icon">&#9201;</span>Overtime</div><div class="nav-item" onclick="go('client-planner',this)" id="nav-client-planner"><span class="nav-icon">&#128203;</span>Client Planner</div><div class="nav-item" onclick="go('profitability',this)" id="nav-profitability"><span class="nav-icon">&#128185;</span>Profitability</div>
+</nav>
 <div class="sidebar-footer"><div class="user-pill"><div class="user-avatar" id="sidebar-avatar">K</div><div class="user-info"><div class="user-name" id="sidebar-name">Karim</div><div class="user-role" id="sidebar-role">Super Admin</div></div><button class="logout-btn" onclick="logout()">↻</button></div></div>
 </aside>
 <main class="main">
@@ -197,7 +198,7 @@ table{width:100%;border-collapse:collapse}th{background:#F8FAFC;padding:11px 20p
 const SB_URL='https://njahzwpglqexvdoknkhd.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qYWh6d3BnbHFleHZkb2tua2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0OTA0NTUsImV4cCI6MjA5MDA2NjQ1NX0.WNOBsDRsN3SNjlqSE1XN0GymYhpWzXqkdIpaf98SiEY';
 let sb,currentPage='dashboard',user=null,userRole='super_admin',allLeads=[],allContacts=[];
-const ROLE_PERMS={super_admin:['dashboard','crm','pipeline','contacts','helpdesk','contracts','billing','tasks','hr','timesheets','payroll','accounting','users','activity','settings','attendance','roster','leaves','payroll-auto','clients','reports','client-portal','inbox','chat','workflows','followups','superadmin','signup','ai-assistant','analytics-ai'],manager:['dashboard','crm','pipeline','contacts','helpdesk','contracts','billing','tasks','hr','timesheets','payroll','accounting','activity','settings','attendance','roster','leaves','payroll-auto','clients','reports','inbox','chat','workflows','followups','ai-assistant','analytics-ai'],team_lead:['dashboard','crm','pipeline','contacts','helpdesk','tasks','hr','timesheets','settings','attendance','roster','leaves','inbox','chat','ai-assistant'],billing_admin:['dashboard','billing','accounting','settings','payroll-auto','clients','reports','ai-assistant'],agent:['dashboard','helpdesk','tasks','timesheets','settings','attendance','leaves','ai-assistant']};
+const ROLE_PERMS={super_admin:['dashboard','crm','pipeline','contacts','helpdesk','contracts','billing','tasks','hr','timesheets','payroll','accounting','users','activity','settings','attendance','roster','leaves','payroll-auto','clients','reports','client-portal','inbox','chat','workflows','followups','superadmin','signup','ai-assistant','analytics-ai','kpi','skills','overtime','client-planner','profitability'],manager:['dashboard','crm','pipeline','contacts','helpdesk','contracts','billing','tasks','hr','timesheets','payroll','accounting','activity','settings','attendance','roster','leaves','payroll-auto','clients','reports','inbox','chat','workflows','followups','ai-assistant','analytics-ai'],team_lead:['dashboard','crm','pipeline','contacts','helpdesk','tasks','hr','timesheets','settings','attendance','roster','leaves','inbox','chat','ai-assistant','kpi','skills','overtime'],billing_admin:['dashboard','billing','accounting','settings','payroll-auto','clients','reports','ai-assistant','profitability','client-planner'],agent:['dashboard','helpdesk','tasks','timesheets','settings','attendance','leaves','ai-assistant','kpi']};
 function canAccess(p){return(ROLE_PERMS[userRole]||ROLE_PERMS['agent']).includes(p);}
 async function init(){sb=window.supabase.createClient(SB_URL,SB_KEY);const{data:{session}}=await sb.auth.getSession();if(session){user=session.user;await showApp();}}
 let isSignup=false;
@@ -205,7 +206,7 @@ function toggleMode(){isSignup=!isSignup;document.getElementById('auth-title').t
 async function handleAuth(){const email=document.getElementById('email').value,pass=document.getElementById('password').value,err=document.getElementById('auth-error');err.style.display='none';if(!email||!pass){err.textContent='Please fill in all fields.';err.style.display='block';return;}if(isSignup){const name=document.getElementById('full-name').value;const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name}}});if(error){err.textContent=error.message;err.style.display='block';return;}user=data.user;await showApp();}else{const{data,error}=await sb.auth.signInWithPassword({email,password:pass});if(error){err.textContent=error.message;err.style.display='block';return;}user=data.user;await showApp();}}
 async function showApp(){document.getElementById('auth-screen').style.display='none';document.getElementById('app-screen').style.display='block';if(user){const name=user.user_metadata?.full_name||user.email?.split('@')[0]||'User';document.getElementById('sidebar-name').textContent=name;document.getElementById('sidebar-avatar').textContent=name.charAt(0).toUpperCase();const se=document.getElementById('settings-email');if(se)se.value=user.email||'';const{data:ur}=await sb.from('users').select('role').eq('email',user.email).single();if(ur?.role)userRole=ur.role;if(user.email==='karim.elammy@coreaxis-solutions.com')userRole='super_admin';document.getElementById('sidebar-role').textContent=roleLabel(userRole);applyRBAC();}await loadDashboard();loadNotifications();}
 function roleLabel(r){return{super_admin:'Super Admin',manager:'Manager',team_lead:'Team Lead',billing_admin:'Billing Admin',agent:'Agent'}[r]||r;}
-function applyRBAC(){var navMap={'nav-users':'users','nav-activity':'activity','nav-inbox':'inbox','nav-chat':'chat','nav-workflows':'workflows','nav-followups':'followups','nav-client-portal':'client-portal','nav-superadmin':'superadmin'};Object.keys(navMap).forEach(function(id){var el=document.getElementById(id);if(el)el.style.display=canAccess(navMap[id])?'flex':'none';});}
+function applyRBAC(){var navMap={'nav-users':'users','nav-activity':'activity','nav-inbox':'inbox','nav-chat':'chat','nav-workflows':'workflows','nav-followups':'followups','nav-client-portal':'client-portal','nav-superadmin':'superadmin','nav-kpi':'kpi','nav-skills':'skills','nav-overtime':'overtime','nav-client-planner':'client-planner','nav-profitability':'profitability'};Object.keys(navMap).forEach(function(id){var el=document.getElementById(id);if(el)el.style.display=canAccess(navMap[id])?'flex':'none';});}
 function sColor(s){return{new:'#6366F1',contacted:'#06B6D4',qualified:'#10B981',proposal:'#F59E0B',closed_won:'#10B981',closed_lost:'#EF4444'}[s]||'#94A3B8';}
 function sBadge(s){return{new:'bg-purple',contacted:'bg-blue',qualified:'bg-green',proposal:'bg-amber',closed_won:'bg-green',closed_lost:'bg-red',draft:'bg-gray',sent:'bg-blue',active:'bg-green',expired:'bg-red',paid:'bg-green',overdue:'bg-red',open:'bg-purple',in_progress:'bg-amber',resolved:'bg-green',closed:'bg-gray',pending:'bg-amber',approved:'bg-green',onboarding:'bg-amber',inactive:'bg-gray',low:'bg-green',medium:'bg-amber',high:'bg-red',urgent:'bg-red',income:'bg-green',expense:'bg-red',super_admin:'bg-purple',manager:'bg-blue',team_lead:'bg-amber',billing_admin:'bg-green',agent:'bg-gray'}[s]||'bg-gray';}
 async function loadDashboard(){checkContractRenewals();const[{data:leads},{data:agents},{data:tickets},{data:invoices}]=await Promise.all([sb.from('leads').select('*').order('created_at',{ascending:false}),sb.from('agents').select('*'),sb.from('tickets').select('*'),sb.from('invoices').select('*')]);allLeads=leads||[];document.getElementById('d-leads').textContent=allLeads.length;document.getElementById('d-agents').textContent=(agents||[]).filter(a=>a.status==='active').length;document.getElementById('d-tickets').textContent=(tickets||[]).filter(t=>t.status==='open').length;const rev=allLeads.filter(l=>l.status==='closed_won').reduce((s,l)=>s+(l.deal_value||0),0);document.getElementById('d-revenue').textContent='$'+rev.toLocaleString();const recent=allLeads.slice(0,5);document.getElementById('dash-leads').innerHTML=recent.length?recent.map(l=>'<div class="pipeline-item"><div class="pipeline-dot" style="background:'+sColor(l.status)+'"></div><div class="pipeline-name">'+(l.first_name||'')+' '+(l.last_name||'')+'<br><small style="color:var(--muted)">'+(l.company||'&mdash;')+'</small></div><span class="badge '+sBadge(l.status)+'">'+l.status+'</span></div>').join(''):'<div style="color:var(--muted);font-size:13px;padding:16px 0">No leads yet.</div>';loadCRM(allLeads);loadPipeline(allLeads);loadContacts(allLeads);loadHR(agents||[]);loadHelpdesk(tickets||[]);loadBilling(invoices||[]);loadDashboardActivity();}
@@ -858,6 +859,52 @@ document.addEventListener("DOMContentLoaded",function(){
 <div style="color:var(--text-muted);font-size:13px">Loading...</div>
 </div></div>
 </div></div>
+<div id="page-kpi" class="page" style="display:none">
+<div class="page-header"><h1 class="page-title">KPI Tracker</h1>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<select id="kpi-agent-filter" onchange="loadKPI()" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text)"><option value="">All Agents</option></select>
+<select id="kpi-month-filter" onchange="loadKPI()" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text)"><option value="">All Months</option></select>
+<button class="btn" onclick="openKPIModal()">+ Add KPI Entry</button>
+<button class="btn btn-secondary" onclick="exportKPICSV()">Export CSV</button>
+</div></div>
+<div id="kpi-summary-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:20px"></div>
+<div class="card"><div class="card-header"><h3>Agent KPI Records</h3></div>
+<div class="table-wrap"><table class="table"><thead><tr><th>Agent</th><th>Month</th><th>CSAT%</th><th>QA Score</th><th>AHT</th><th>Adherence%</th><th>Bonus</th><th>Score</th><th>Actions</th></tr></thead>
+<tbody id="kpi-table-body"></tbody></table></div></div>
+</div>
+<div id="page-skills" class="page" style="display:none">
+<div class="page-header"><h1 class="page-title">Skills Matrix</h1>
+<button class="btn" onclick="openSkillModal()">+ Add Skill Record</button></div>
+<div class="card"><div class="card-header"><h3>Agent Skills Overview</h3></div>
+<div class="table-wrap"><table class="table"><thead><tr><th>Agent</th><th>Role</th><th>Department</th><th>Skills</th><th>Language</th><th>Certifications</th><th>Level</th><th>Actions</th></tr></thead>
+<tbody id="skills-table-body"></tbody></table></div></div>
+</div>
+<div id="page-overtime" class="page" style="display:none">
+<div class="page-header"><h1 class="page-title">Overtime Tracker</h1>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<select id="ot-agent-filter" onchange="loadOvertime()" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text)"><option value="">All Agents</option></select>
+<select id="ot-month-filter" onchange="loadOvertime()" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text)"><option value="">All Months</option></select>
+<button class="btn" onclick="openOTModal()">+ Log Overtime</button>
+<button class="btn btn-secondary" onclick="exportOTCSV()">Export CSV</button>
+</div></div>
+<div id="ot-summary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:20px"></div>
+<div class="card"><div class="card-header"><h3>Overtime Records</h3></div>
+<div class="table-wrap"><table class="table"><thead><tr><th>Agent</th><th>Date</th><th>Reg Hrs</th><th>OT Hours</th><th>Rate</th><th>OT Pay</th><th>Status</th><th>Actions</th></tr></thead>
+<tbody id="ot-table-body"></tbody></table></div></div>
+</div>
+<div id="page-client-planner" class="page" style="display:none">
+<div class="page-header"><h1 class="page-title">Client Planner</h1>
+<button class="btn" onclick="openClientPlanModal()">+ Add Client Plan</button></div>
+<div id="client-plan-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px"></div>
+</div>
+<div id="page-profitability" class="page" style="display:none">
+<div class="page-header"><h1 class="page-title">Profitability Dashboard</h1>
+<button class="btn btn-secondary" onclick="loadProfitability()">Refresh</button></div>
+<div id="profit-summary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:20px"></div>
+<div class="card"><div class="card-header"><h3>Per-Client P&amp;L Breakdown</h3></div>
+<div class="table-wrap"><table class="table"><thead><tr><th>Client</th><th>Revenue</th><th>Agent Cost</th><th>Gross Profit</th><th>Margin%</th><th>Agents</th><th>Status</th></tr></thead>
+<tbody id="profit-table-body"></tbody></table></div></div>
+</div>
 <script id="p5js">
 var P5_SB_URL = "https://njahzwpglqexvdoknkhd.supabase.co";
 var P5_SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qYWh6d3BnbHFleHZkb2tua2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0OTA0NTUsImV4cCI6MjA5MDA2NjQ1NX0.WNOBsDRsN3SNjlqSE1XN0GymYhpWzXqkdIpaf98SiEY";
@@ -1218,6 +1265,279 @@ window.loadAnalyticsAI  = loadAnalyticsAI;
 window.saveAnthropicKey = saveAnthropicKey;
 window.installPWA       = installPWA;
 window.appendAiMsg      = appendAiMsg;
+})();
+</script>
+<script id="p8js">
+(function(){
+var SB8="https://njahzwpglqexvdoknkhd.supabase.co";
+var SK8="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qYWh6d3BnbHFleHZkb2tua2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0OTA0NTUsImV4cCI6MjA5MDA2NjQ1NX0.WNOBsDRsN3SNjlqSE1XN0GymYhpWzXqkdIpaf98SiEY";
+function p8sb(path,method,body){var opts={method:method||"GET",headers:{"Content-Type":"application/json","apikey":SK8,"Authorization":"Bearer "+SK8,"Prefer":"return=representation"}};if(body) opts.body=JSON.stringify(body);return fetch(SB8+"/rest/v1/"+path,opts).then(function(r){return r.json();});}
+<script id="p8js">
+(function(){
+var SB8="https://njahzwpglqexvdoknkhd.supabase.co";
+var SK8="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qYWh6d3BnbHFleHZkb2tua2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0OTA0NTUsImV4cCI6MjA5MDA2NjQ1NX0.WNOBsDRsN3SNjlqSE1XN0GymYhpWzXqkdIpaf98SiEY";
+function p8sb(path,method,body){
+  var opts={method:method||"GET",headers:{"Content-Type":"application/json","apikey":SK8,"Authorization":"Bearer "+SK8,"Prefer":"return=representation"}};
+  if(body) opts.body=JSON.stringify(body);
+  return fetch(SB8+"/rest/v1/"+path,opts).then(function(r){return r.json();});
+}
+var _kpiData=[];
+function calcKPIScore(r){
+  var c=parseFloat(r.csat_score||0),q=parseFloat(r.qa_score||0),a=parseFloat(r.adherence_pct||0),h=parseFloat(r.aht_minutes||0);
+  var hs=h>0&&h<=6?100:h<=8?80:h<=10?60:40;
+  return Math.round(c*0.3+q*0.3+a*0.2+hs*0.2);
+}
+function renderKPISummary(rows){
+  var el=document.getElementById("kpi-summary-cards");
+  if(!el) return;
+  var cnt=rows.length||1,tc=0,tq=0,ta=0,th=0;
+  for(var i=0;i<rows.length;i++){tc+=parseFloat(rows[i].csat_score||0);tq+=parseFloat(rows[i].qa_score||0);ta+=parseFloat(rows[i].adherence_pct||0);th+=parseFloat(rows[i].aht_minutes||0);}
+  var cards=[["Avg CSAT",(tc/cnt).toFixed(1)+"%","#22c55e"],["Avg QA",(tq/cnt).toFixed(1)+"%","#3b82f6"],["Avg Adherence",(ta/cnt).toFixed(1)+"%","#8b5cf6"],["Avg AHT",(th/cnt).toFixed(1)+" min","#f59e0b"],["Records",rows.length,"#06b6d4"]];
+  el.innerHTML=cards.map(function(c){return "<div class=\"card\" style=\"padding:16px;border-top:3px solid "+c[2]+"\"><div style=\"font-size:11px;color:var(--text-muted)\">"+c[0]+"</div><div style=\"font-size:22px;font-weight:700;color:"+c[2]+";margin-top:4px\">"+c[1]+"</div></div>";}).join("");
+}
+function renderKPITable(rows){
+  var tb=document.getElementById("kpi-table-body");
+  if(!tb) return;
+  if(!rows.length){tb.innerHTML="<tr><td colspan=9 style=\"text-align:center;padding:24px;color:var(--text-muted)\">No KPI records yet. Click + Add KPI Entry.</td></tr>";return;}
+  tb.innerHTML=rows.map(function(r){
+    var s=calcKPIScore(r),sc=s>=80?"#22c55e":s>=60?"#f59e0b":"#ef4444";
+    var bon=s>=80?"<span style=\"color:#22c55e;font-weight:600\">Yes</span>":"<span style=\"color:#ef4444\">No</span>";
+    return "<tr><td>"+(r.agent_name||r.agent_id||"")+"</td><td>"+(r.month||"")+"</td><td>"+(r.csat_score||0)+"%</td><td>"+(r.qa_score||0)+"%</td><td>"+(r.aht_minutes||0)+" min</td><td>"+(r.adherence_pct||0)+"%</td><td>"+bon+"</td><td><b style=\"color:"+sc+"\">"+s+"</b>/100</td><td><button class=\"btn btn-sm btn-secondary\" onclick=\"editKPI('"+r.id+"')\" >Edit</button> <button class=\"btn btn-sm\" style=\"background:#ef4444;color:#fff\" onclick=\"deleteKPI('"+r.id+"')\" >Del</button></td></tr>";
+  }).join("");
+}
+function checkKPIAlerts(rows){
+  var low=[];
+  for(var i=0;i<rows.length;i++){if(calcKPIScore(rows[i])<60) low.push(rows[i].agent_name||rows[i].agent_id||"?");}
+  if(low.length) showToast("Low KPI Alert: "+low.slice(0,3).join(", ")+(low.length>3?" (+"+(low.length-3)+" more)":""));
+}
+function loadKPI(){
+  var agF=document.getElementById("kpi-agent-filter"),moF=document.getElementById("kpi-month-filter");
+  if(!moF) return;
+  if(moF.options.length<2){
+    var mn=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],yr=new Date().getFullYear();
+    moF.innerHTML="<option value=\"\">All Months</option>";
+    for(var mi=0;mi<12;mi++){var mv=yr+"-"+(mi<9?"0":"")+(mi+1);var oo=document.createElement("option");oo.value=mv;oo.textContent=mn[mi]+" "+yr;moF.appendChild(oo);}
+  }
+  p8sb("agents?select=id,name&order=name").then(function(ag){
+    if(!ag||ag.error) ag=[];
+    if(agF&&agF.options.length<2){agF.innerHTML="<option value=\"\">All Agents</option>";for(var i=0;i<ag.length;i++){var o=document.createElement("option");o.value=ag[i].id;o.textContent=ag[i].name;agF.appendChild(o);}}
+    var url="agent_kpis?select=*&order=month.desc";
+    if(agF&&agF.value) url+="&agent_id=eq."+agF.value;
+    if(moF&&moF.value) url+="&month=eq."+moF.value;
+    return p8sb(url);
+  }).then(function(rows){if(!rows||rows.error) rows=[];_kpiData=rows;renderKPITable(rows);renderKPISummary(rows);checkKPIAlerts(rows);}).catch(function(){renderKPITable([]);});
+}
+function openKPIModal(editId){
+  var ex=editId?(_kpiData.filter(function(r){return r.id===editId;})[0]||{}):{},old=document.getElementById("modal-kpi");
+  if(old) old.remove();
+  var m=document.createElement("div");m.id="modal-kpi";m.className="modal-overlay";m.style.display="flex";
+  m.innerHTML="<div class=\"modal\" style=\"max-width:520px;width:92%\">"+"<div class=\"modal-header\"><h3>"+(editId?"Edit":"Add")+" KPI Entry</h3><button class=\"close-btn\" onclick=\"closeModal('modal-kpi')\">x</button></div>"+"<div class=\"modal-body\" style=\"display:grid;gap:14px\">"+"<div><label>Agent</label><select id=\"kpim-agent\" style=\"width:100%;padding:8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text)\"><option value=\"\">Loading...</option></select></div>"+"<div><label>Month</label><input type=\"month\" id=\"kpim-month\" value=\""+(ex.month||"")+"\"></div>"+"<div style=\"display:grid;grid-template-columns:1fr 1fr;gap:12px\">"+"<div><label>CSAT %</label><input type=\"number\" id=\"kpim-csat\" min=0 max=100 value=\""+(ex.csat_score||"")+"\"></div>"+"<div><label>QA Score %</label><input type=\"number\" id=\"kpim-qa\" min=0 max=100 value=\""+(ex.qa_score||"")+"\"></div>"+"<div><label>AHT (min)</label><input type=\"number\" id=\"kpim-aht\" min=0 value=\""+(ex.aht_minutes||"")+"\"></div>"+"<div><label>Adherence %</label><input type=\"number\" id=\"kpim-adh\" min=0 max=100 value=\""+(ex.adherence_pct||"")+"\"></div></div>"+"<div><label>Notes</label><input id=\"kpim-notes\" value=\""+(ex.notes||"")+"\"></div>"+"</div><div class=\"modal-footer\"><button class=\"btn btn-secondary\" onclick=\"closeModal('modal-kpi')\">Cancel</button>"+"<button class=\"btn\" onclick=\"saveKPI('"+(editId||"")+"')\" >Save KPI</button></div></div>";
+  document.body.appendChild(m);
+  p8sb("agents?select=id,name&order=name").then(function(ag){
+    if(!ag||ag.error) ag=[];
+    var sel=document.getElementById("kpim-agent");if(!sel) return;
+    sel.innerHTML="<option value=\"\">Select Agent</option>";
+    for(var i=0;i<ag.length;i++){var o=document.createElement("option");o.value=ag[i].id;o.textContent=ag[i].name;if(ex.agent_id===ag[i].id) o.selected=true;sel.appendChild(o);}
+  });
+}
+function saveKPI(editId){
+  var body={agent_id:document.getElementById("kpim-agent").value,month:document.getElementById("kpim-month").value,csat_score:parseFloat(document.getElementById("kpim-csat").value)||0,qa_score:parseFloat(document.getElementById("kpim-qa").value)||0,aht_minutes:parseFloat(document.getElementById("kpim-aht").value)||0,adherence_pct:parseFloat(document.getElementById("kpim-adh").value)||0,notes:document.getElementById("kpim-notes").value};
+  if(!body.agent_id||!body.month){showToast("Agent and Month required");return;}
+  p8sb(editId?"agent_kpis?id=eq."+editId:"agent_kpis",editId?"PATCH":"POST",body).then(function(){showToast("KPI saved");closeModal("modal-kpi");loadKPI();}).catch(function(){showToast("Error saving KPI");});
+}
+function editKPI(id){openKPIModal(id);}
+function deleteKPI(id){if(!confirm("Delete this KPI record?")) return;p8sb("agent_kpis?id=eq."+id,"DELETE").then(function(){showToast("Deleted");loadKPI();});}
+function exportKPICSV(){if(!_kpiData.length){showToast("No data");return;}var h2="Agent,Month,CSAT%,QA%,AHT,Adherence%,Score,Bonus\n";var r2=_kpiData.map(function(r){var s=calcKPIScore(r);return [r.agent_name||r.agent_id,r.month,r.csat_score,r.qa_score,r.aht_minutes,r.adherence_pct,s,s>=80?"Yes":"No"].join(",");}).join("\n");var a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(h2+r2);a.download="kpi.csv";a.click();}
+var _skillsData=[];
+function loadSkills(){
+  p8sb("agent_skills?select=*&order=agent_name").then(function(rows){if(!rows||rows.error) rows=[];_skillsData=rows;renderSkillsTable(rows);}).catch(function(){renderSkillsTable([]);});
+}
+function renderSkillsTable(rows){
+  var tb=document.getElementById("skills-table-body");if(!tb) return;
+  if(!rows.length){tb.innerHTML="<tr><td colspan=8 style=\"text-align:center;padding:24px;color:var(--text-muted)\">No skill records yet.</td></tr>";return;}
+  tb.innerHTML=rows.map(function(r){
+    var lc=r.level==="Expert"?"#22c55e":r.level==="Intermediate"?"#3b82f6":r.level==="Senior"?"#8b5cf6":"#94a3b8";
+    var skillTags=(r.skills||"").split(",").filter(Boolean).map(function(s){return "<span style=\"background:var(--bg);color:var(--primary);padding:2px 8px;border-radius:20px;font-size:12px;border:1px solid var(--border)\">"+s.trim()+"</span>";}).join(" ");
+    return "<tr><td><b>"+(r.agent_name||"")+"</b></td><td>"+(r.role||"")+"</td><td>"+(r.department||"")+"</td><td>"+skillTags+"</td><td>"+(r.language||"")+"</td><td>"+(r.certifications||"-")+"</td><td><span style=\"color:"+lc+";font-weight:600\">"+(r.level||"-")+"</span></td><td><button class=\"btn btn-sm btn-secondary\" onclick=\"editSkill('"+r.id+"')\" >Edit</button> <button class=\"btn btn-sm\" style=\"background:#ef4444;color:#fff\" onclick=\"deleteSkill('"+r.id+"')\" >Del</button></td></tr>";
+  }).join("");
+}
+function openSkillModal(editId){
+  var ex=editId?(_skillsData.filter(function(r){return r.id===editId;})[0]||{}):{},old=document.getElementById("modal-skill");if(old) old.remove();
+  var m=document.createElement("div");m.id="modal-skill";m.className="modal-overlay";m.style.display="flex";
+  m.innerHTML="<div class=\"modal\" style=\"max-width:520px;width:92%\">"+"<div class=\"modal-header\"><h3>"+(editId?"Edit":"Add")+" Skill Record</h3><button class=\"close-btn\" onclick=\"closeModal('modal-skill')\">x</button></div>"+"<div class=\"modal-body\" style=\"display:grid;gap:14px\">"+"<div style=\"display:grid;grid-template-columns:1fr 1fr;gap:12px\">"+"<div><label>Agent Name</label><input id=\"skm-name\" value=\""+(ex.agent_name||"")+"\"></div>"+"<div><label>Role</label><select id=\"skm-role\"><option value=\"\">Select</option><option"+(ex.role==='Agent'?' selected':'')+">Agent</option><option"+(ex.role==='Team Leader'?' selected':'')+">Team Leader</option><option"+(ex.role==='QA Analyst'?' selected':'')+">QA Analyst</option><option"+(ex.role==='Manager'?' selected':'')+">Manager</option></select></div>"+"<div><label>Department</label><input id=\"skm-dept\" value=\""+(ex.department||"")+"\"></div>"+"<div><label>Level</label><select id=\"skm-level\"><option value=\"\">Select</option><option"+(ex.level==='Junior'?' selected':'')+">Junior</option><option"+(ex.level==='Intermediate'?' selected':'')+">Intermediate</option><option"+(ex.level==='Senior'?' selected':'')+">Senior</option><option"+(ex.level==='Expert'?' selected':'')+">Expert</option></select></div>"+"</div>"+"<div><label>Skills (comma separated)</label><input id=\"skm-skills\" value=\""+(ex.skills||"")+"\"></div>"+"<div style=\"display:grid;grid-template-columns:1fr 1fr;gap:12px\">"+"<div><label>Language</label><input id=\"skm-lang\" value=\""+(ex.language||"")+"\"></div>"+"<div><label>Certifications</label><input id=\"skm-cert\" value=\""+(ex.certifications||"")+"\"></div></div>"+"</div><div class=\"modal-footer\"><button class=\"btn btn-secondary\" onclick=\"closeModal('modal-skill')\">Cancel</button><button class=\"btn\" onclick=\"saveSkill('"+(editId||"")+"')\" >Save</button></div></div>";
+  document.body.appendChild(m);
+}
+function saveSkill(editId){
+  var body={agent_name:(document.getElementById("skm-name").value||"").trim(),role:document.getElementById("skm-role").value,department:(document.getElementById("skm-dept").value||"").trim(),level:document.getElementById("skm-level").value,skills:(document.getElementById("skm-skills").value||"").trim(),language:(document.getElementById("skm-lang").value||"").trim(),certifications:(document.getElementById("skm-cert").value||"").trim()};
+  if(!body.agent_name){showToast("Agent name required");return;}
+  p8sb(editId?"agent_skills?id=eq."+editId:"agent_skills",editId?"PATCH":"POST",body).then(function(){showToast("Saved");closeModal("modal-skill");loadSkills();}).catch(function(){showToast("Error saving");});
+}
+function editSkill(id){openSkillModal(id);}
+function deleteSkill(id){if(!confirm("Delete?")) return;p8sb("agent_skills?id=eq."+id,"DELETE").then(function(){showToast("Deleted");loadSkills();});}
+var _otData=[];
+function loadOvertime(){
+  var agF=document.getElementById("ot-agent-filter"),moF=document.getElementById("ot-month-filter");
+  if(!moF) return;
+  if(moF.options.length<2){var mn=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],yr=new Date().getFullYear();moF.innerHTML="<option value=\"\">All Months</option>";for(var mi=0;mi<12;mi++){var mv=yr+"-"+(mi<9?"0":"")+(mi+1);var oo=document.createElement("option");oo.value=mv;oo.textContent=mn[mi]+" "+yr;moF.appendChild(oo);}}
+  p8sb("agents?select=id,name&order=name").then(function(ag){
+    if(!ag||ag.error) ag=[];
+    if(agF&&agF.options.length<2){agF.innerHTML="<option value=\"\">All Agents</option>";for(var i=0;i<ag.length;i++){var o=document.createElement("option");o.value=ag[i].id;o.textContent=ag[i].name;agF.appendChild(o);}}
+    var url="overtime_logs?select=*&order=work_date.desc";
+    if(agF&&agF.value) url+="&agent_id=eq."+agF.value;
+    if(moF&&moF.value) url+="&work_month=eq."+moF.value;
+    return p8sb(url);
+  }).then(function(rows){if(!rows||rows.error) rows=[];_otData=rows;renderOTTable(rows);renderOTSummary(rows);}).catch(function(){renderOTTable([]);});
+}
+function renderOTSummary(rows){
+  var el=document.getElementById("ot-summary");if(!el) return;
+  var tot=0,tp=0,pend=0;for(var i=0;i<rows.length;i++){tot+=parseFloat(rows[i].ot_hours||0);tp+=parseFloat(rows[i].ot_pay||0);if(!rows[i].approved) pend++;}
+  el.innerHTML="<div class=\"card\" style=\"padding:16px;border-top:3px solid #f59e0b\"><div style=\"font-size:11px;color:var(--text-muted)\">Total OT Hours</div><div style=\"font-size:22px;font-weight:700;color:#f59e0b\">"+tot.toFixed(1)+"h</div></div>"+"<div class=\"card\" style=\"padding:16px;border-top:3px solid #22c55e\"><div style=\"font-size:11px;color:var(--text-muted)\">Total OT Pay</div><div style=\"font-size:22px;font-weight:700;color:#22c55e\">$"+tp.toFixed(2)+"</div></div>"+"<div class=\"card\" style=\"padding:16px;border-top:3px solid #ef4444\"><div style=\"font-size:11px;color:var(--text-muted)\">Pending Approval</div><div style=\"font-size:22px;font-weight:700;color:#ef4444\">"+pend+"</div></div>"+"<div class=\"card\" style=\"padding:16px;border-top:3px solid #3b82f6\"><div style=\"font-size:11px;color:var(--text-muted)\">OT Entries</div><div style=\"font-size:22px;font-weight:700;color:#3b82f6\">"+rows.length+"</div></div>";
+}
+function renderOTTable(rows){
+  var tb=document.getElementById("ot-table-body");if(!tb) return;
+  if(!rows.length){tb.innerHTML="<tr><td colspan=8 style=\"text-align:center;padding:24px;color:var(--text-muted)\">No overtime records found.</td></tr>";return;}
+  tb.innerHTML=rows.map(function(r){
+    var ap=r.approved?"<span style=\"color:#22c55e;font-weight:600\">Approved</span>":"<button class=\"btn btn-sm\" style=\"background:#22c55e;color:#fff\" onclick=\"approveOT('"+r.id+"')\" >Approve</button>";
+    return "<tr><td>"+(r.agent_name||r.agent_id||"")+"</td><td>"+(r.work_date||"")+"</td><td>"+(r.regular_hours||8)+"h</td><td><b>"+(r.ot_hours||0)+"h</b></td><td>"+(r.ot_rate||0)+"x</td><td><b style=\"color:#22c55e\">$"+parseFloat(r.ot_pay||0).toFixed(2)+"</b></td><td>"+ap+"</td><td><button class=\"btn btn-sm btn-secondary\" onclick=\"editOT('"+r.id+"')\" >Edit</button> <button class=\"btn btn-sm\" style=\"background:#ef4444;color:#fff\" onclick=\"deleteOT('"+r.id+"')\" >Del</button></td></tr>";
+  }).join("");
+}
+function approveOT(id){p8sb("overtime_logs?id=eq."+id,"PATCH",{approved:true}).then(function(){showToast("Approved");loadOvertime();});}
+function openOTModal(editId){
+  var ex=editId?(_otData.filter(function(r){return r.id===editId;})[0]||{}):{},old=document.getElementById("modal-ot");if(old) old.remove();
+  var m=document.createElement("div");m.id="modal-ot";m.className="modal-overlay";m.style.display="flex";
+  m.innerHTML="<div class=\"modal\" style=\"max-width:500px;width:92%\">"+"<div class=\"modal-header\"><h3>"+(editId?"Edit":"Log")+" Overtime</h3><button class=\"close-btn\" onclick=\"closeModal('modal-ot')\">x</button></div>"+"<div class=\"modal-body\" style=\"display:grid;gap:14px\">"+"<div><label>Agent</label><select id=\"otm-agent\"><option value=\"\">Loading...</option></select></div>"+"<div style=\"display:grid;grid-template-columns:1fr 1fr;gap:12px\">"+"<div><label>Work Date</label><input type=\"date\" id=\"otm-date\" value=\""+(ex.work_date||"")+"\"></div>"+"<div><label>Month</label><input type=\"month\" id=\"otm-month\" value=\""+(ex.work_month||"")+"\"></div>"+"<div><label>Regular Hours</label><input type=\"number\" id=\"otm-reg\" value=\""+(ex.regular_hours||8)+"\"></div>"+"<div><label>OT Hours</label><input type=\"number\" id=\"otm-ot\" step=0.5 value=\""+(ex.ot_hours||"")+"\"></div>"+"<div><label>OT Rate (x)</label><input type=\"number\" id=\"otm-rate\" step=0.25 value=\""+(ex.ot_rate||1.5)+"\"></div>"+"<div><label>OT Pay ($)</label><input type=\"number\" id=\"otm-pay\" step=0.01 value=\""+(ex.ot_pay||"")+"\"></div></div>"+"<div><label>Notes</label><input id=\"otm-notes\" value=\""+(ex.notes||"")+"\"></div>"+"</div><div class=\"modal-footer\"><button class=\"btn btn-secondary\" onclick=\"closeModal('modal-ot')\">Cancel</button><button class=\"btn\" onclick=\"saveOT('"+(editId||"")+"')\" >Save</button></div></div>";
+  document.body.appendChild(m);
+  p8sb("agents?select=id,name&order=name").then(function(ag){if(!ag||ag.error) ag=[];var sel=document.getElementById("otm-agent");if(!sel) return;sel.innerHTML="<option value=\"\">Select Agent</option>";for(var i=0;i<ag.length;i++){var o=document.createElement("option");o.value=ag[i].id;o.textContent=ag[i].name;if(ex.agent_id===ag[i].id) o.selected=true;sel.appendChild(o);}});
+}
+function saveOT(editId){
+  var body={agent_id:document.getElementById("otm-agent").value,work_date:document.getElementById("otm-date").value,work_month:document.getElementById("otm-month").value,regular_hours:parseFloat(document.getElementById("otm-reg").value)||8,ot_hours:parseFloat(document.getElementById("otm-ot").value)||0,ot_rate:parseFloat(document.getElementById("otm-rate").value)||1.5,ot_pay:parseFloat(document.getElementById("otm-pay").value)||0,notes:document.getElementById("otm-notes").value,approved:false};
+  if(!body.agent_id||!body.work_date){showToast("Agent and Date required");return;}
+  p8sb(editId?"overtime_logs?id=eq."+editId:"overtime_logs",editId?"PATCH":"POST",body).then(function(){showToast("Overtime logged");closeModal("modal-ot");loadOvertime();}).catch(function(){showToast("Error");});
+}
+function editOT(id){openOTModal(id);}
+function deleteOT(id){if(!confirm("Delete?")) return;p8sb("overtime_logs?id=eq."+id,"DELETE").then(function(){showToast("Deleted");loadOvertime();});}
+function exportOTCSV(){if(!_otData.length){showToast("No data");return;}var h2="Agent,Date,Month,Reg Hrs,OT Hrs,Rate,OT Pay,Approved\n";var r2=_otData.map(function(r){return [r.agent_name||r.agent_id,r.work_date,r.work_month,r.regular_hours,r.ot_hours,r.ot_rate,r.ot_pay,r.approved?"Yes":"No"].join(",");}).join("\n");var a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(h2+r2);a.download="overtime.csv";a.click();}
+var _planData=[];
+function loadClientPlanner(){
+  p8sb("client_plans?select=*&order=created_at.desc").then(function(rows){
+    if(!rows||rows.error) rows=[];
+    _planData=rows;renderClientPlanGrid(rows);checkUnderstaffing(rows);
+  }).catch(function(){renderClientPlanGrid([]);});
+}
+function renderClientPlanGrid(rows){
+  var el=document.getElementById("client-plan-grid");if(!el) return;
+  if(!rows.length){el.innerHTML="<div class=\"card\" style=\"padding:32px;text-align:center;color:var(--text-muted)\">No client plans yet.</div>";return;}
+  var stc={};stc["Setup"]="#f59e0b";stc["Training"]="#3b82f6";stc["Live"]="#22c55e";stc["Scaling"]="#8b5cf6";stc["Paused"]="#94a3b8";
+  el.innerHTML=rows.map(function(r){
+    var sc=stc[r.status]||"#94a3b8";
+    var warn=r.min_headcount>0&&r.assigned_agents<r.min_headcount?"<div style=\"background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:6px;font-size:12px;color:#ef4444;margin-top:6px\">Understaffed: "+r.assigned_agents+"/"+r.min_headcount+" required</div>":"";
+    var noteLines=(r.comm_log||"").split("\n").filter(Boolean).slice(-2);
+    var notesHtml=noteLines.length?noteLines.map(function(l){return "<div style=\"font-size:12px;padding:2px 0;color:var(--text-muted)\">"+l+"</div>";}).join(""):"<div style=\"font-size:12px;color:var(--text-muted)\">No notes yet</div>";
+    var h="<div class=\"card\" style=\"padding:0;overflow:hidden\">";
+    h+="<div style=\"background:"+sc+";padding:12px 16px;display:flex;justify-content:space-between\">";
+    h+="<b style=\"color:#fff\">"+(r.client_name||"")+"</b>";
+    h+="<span style=\"background:rgba(255,255,255,0.25);color:#fff;padding:3px 10px;border-radius:20px;font-size:12px\">"+(r.status||"")+"</span></div>";
+    h+="<div style=\"padding:14px\">";
+    h+="<div style=\"display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px;margin-bottom:8px\">";
+    h+="<div>SLA: <b>"+(r.sla_tier||"-")+"</b></div><div>Model: <b>"+(r.pricing_model||"-")+"</b></div>";
+    h+="<div>Rate: <b>$"+(r.rate||0)+"/"+(r.rate_unit||"hr")+"</b></div><div>Agents: <b>"+(r.assigned_agents||0)+"</b></div></div>";
+    h+=warn;
+    h+="<div style=\"font-size:12px;font-weight:600;color:var(--text-muted);margin:8px 0 4px\">Notes:</div>"+notesHtml;
+    h+="<div style=\"display:flex;gap:8px;margin-top:10px\">";
+    h+="<button class=\"btn btn-sm btn-secondary\" onclick=\"editClientPlan('"+r.id+"')\" style=\"flex:1\">Edit</button>";
+    h+="<button class=\"btn btn-sm\" onclick=\"addCommNote('"+r.id+"')\" style=\"flex:1\">+ Note</button></div>";
+    h+="</div></div>";
+    return h;
+  }).join("");
+}
+function checkUnderstaffing(rows){
+  if(!rows||!rows.length) return;
+  var under=[];
+  for(var i=0;i<rows.length;i++){if(rows[i].min_headcount>0&&rows[i].assigned_agents<rows[i].min_headcount&&rows[i].status!=="Paused") under.push(rows[i].client_name);}
+  if(under.length) showToast("Understaffing: "+under.join(", "));
+}
+function openClientPlanModal(editId){
+  var ex=editId?(_planData.filter(function(r){return r.id===editId;})[0]||{}):{},old=document.getElementById("modal-cplan");if(old) old.remove();
+  var m=document.createElement("div");m.id="modal-cplan";m.className="modal-overlay";m.style.display="flex";
+  var statusOpts=["Setup","Training","Live","Scaling","Paused"].map(function(s){return "<option"+(ex.status===s?" selected":"")+">"+s+"</option>";}).join("");
+  var slaOpts=["Standard","Premium","Enterprise"].map(function(s){return "<option"+(ex.sla_tier===s?" selected":"")+">"+s+"</option>";}).join("");
+  var pricingOpts=["Per Agent","Per Hour","Per Ticket","Fixed Monthly"].map(function(s){return "<option"+(ex.pricing_model===s?" selected":"")+">"+s+"</option>";}).join("");
+  var unitOpts=[["hr","per hour"],["agent","per agent"],["mo","per month"],["ticket","per ticket"]].map(function(u){return "<option value=\""+u[0]+"\"" +(ex.rate_unit===u[0]?" selected":"")+">"+u[1]+"</option>";}).join("");
+  var h="";
+  h+="<div class=\"modal\" style=\"max-width:540px;width:92%\">";
+  h+="<div class=\"modal-header\"><h3>"+(editId?"Edit":"Add")+" Client Plan</h3><button class=\"close-btn\" onclick=\"closeModal('modal-cplan')\">x</button></div>";
+  h+="<div class=\"modal-body\" style=\"display:grid;gap:14px\">";
+  h+="<div><label>Client Name</label><input id=\"cpm-name\" value=\""+(ex.client_name||"")+"\"></div>";
+  h+="<div style=\"display:grid;grid-template-columns:1fr 1fr;gap:12px\">";
+  h+="<div><label>Status</label><select id=\"cpm-status\">"+statusOpts+"</select></div>";
+  h+="<div><label>SLA Tier</label><select id=\"cpm-sla\">"+slaOpts+"</select></div>";
+  h+="<div><label>Pricing Model</label><select id=\"cpm-pricing\">"+pricingOpts+"</select></div>";
+  h+="<div><label>Rate (USD)</label><input type=\"number\" id=\"cpm-rate\" value=\""+(ex.rate||0)+"\"></div>";
+  h+="<div><label>Rate Unit</label><select id=\"cpm-runit\">"+unitOpts+"</select></div>";
+  h+="<div><label>Assigned Agents</label><input type=\"number\" id=\"cpm-agents\" value=\""+(ex.assigned_agents||0)+"\"></div>";
+  h+="<div><label>Min Headcount</label><input type=\"number\" id=\"cpm-minhead\" value=\""+(ex.min_headcount||0)+"\"></div></div>";
+  h+="</div><div class=\"modal-footer\"><button class=\"btn btn-secondary\" onclick=\"closeModal('modal-cplan')\">Cancel</button><button class=\"btn\" onclick=\"saveClientPlan('"+(editId||"")+"')\" >Save</button></div></div>";
+  m.innerHTML=h;document.body.appendChild(m);
+}
+function saveClientPlan(editId){
+  var nm=(document.getElementById("cpm-name").value||"").trim();
+  if(!nm){showToast("Client name required");return;}
+  var body={client_name:nm,status:document.getElementById("cpm-status").value,sla_tier:document.getElementById("cpm-sla").value,pricing_model:document.getElementById("cpm-pricing").value,rate:parseFloat(document.getElementById("cpm-rate").value)||0,rate_unit:document.getElementById("cpm-runit").value,assigned_agents:parseInt(document.getElementById("cpm-agents").value)||0,min_headcount:parseInt(document.getElementById("cpm-minhead").value)||0};
+  p8sb(editId?"client_plans?id=eq."+editId:"client_plans",editId?"PATCH":"POST",body).then(function(){showToast("Saved");closeModal("modal-cplan");loadClientPlanner();}).catch(function(){showToast("Error");});
+}
+function editClientPlan(id){openClientPlanModal(id);}
+function addCommNote(planId){
+  var note=prompt("Add note (call/email/meeting):");if(!note) return;
+  var plan=_planData.filter(function(r){return r.id===planId;})[0];if(!plan) return;
+  var ts=new Date().toLocaleDateString()+": "+note;
+  p8sb("client_plans?id=eq."+planId,"PATCH",{comm_log:(plan.comm_log||"")+"\n"+ts}).then(function(){showToast("Note added");loadClientPlanner();});
+}
+function loadProfitability(){
+  Promise.all([p8sb("invoices?select=client_id,amount,status"),p8sb("client_plans?select=id,client_name,assigned_agents,rate,rate_unit,status"),p8sb("agents?select=id,salary")]).then(function(res){
+    var invs=res[0]||[],plans=res[1]||[],ags=res[2]||[];
+    if(invs.error) invs=[];if(plans.error) plans=[];if(ags.error) ags=[];
+    var avgSal=0;
+    if(ags.length){var tot=0;for(var i=0;i<ags.length;i++) tot+=parseFloat(ags[i].salary||0);avgSal=tot/ags.length;}
+    renderProfitability(plans,invs,avgSal);
+  }).catch(function(){renderProfitability([],[],0);});
+}
+function renderProfitability(plans,invs,avgSal){
+  var tb=document.getElementById("profit-table-body"),sm=document.getElementById("profit-summary");
+  if(!tb||!sm) return;
+  var grandRev=0,grandCost=0;
+  var stc={};stc["Setup"]="#f59e0b";stc["Training"]="#3b82f6";stc["Live"]="#22c55e";stc["Scaling"]="#8b5cf6";stc["Paused"]="#94a3b8";
+  var rowsHtml=plans.map(function(p){
+    var rev=0;for(var i=0;i<invs.length;i++){if(invs[i].client_id===p.id&&invs[i].status!=="cancelled") rev+=parseFloat(invs[i].amount||0);}
+    var cost=(p.assigned_agents||0)*avgSal;
+    var profit=rev-cost,margin=rev>0?((profit/rev)*100).toFixed(1):0;
+    grandRev+=rev;grandCost+=cost;
+    var mc=profit>=0?"#22c55e":"#ef4444";
+    return "<tr><td><b>"+(p.client_name||"")+"</b></td><td><b style=\"color:#22c55e\">$"+rev.toFixed(2)+"</b></td><td>$"+cost.toFixed(2)+"</td><td><b style=\"color:"+mc+"\">$"+profit.toFixed(2)+"</b></td><td><span style=\"color:"+mc+";font-weight:700\">"+margin+"%</span></td><td>"+(p.assigned_agents||0)+"</td><td><span style=\"background:"+(stc[p.status]||"#94a3b8")+";color:#fff;padding:3px 10px;border-radius:20px;font-size:12px\">"+(p.status||"-")+"</span></td></tr>";
+  }).join("");
+  tb.innerHTML=rowsHtml||"<tr><td colspan=7 style=\"text-align:center;padding:24px;color:var(--text-muted)\">No client data yet. Add clients in Client Planner first.</td></tr>";
+  var gp=grandRev-grandCost,gm=grandRev>0?((gp/grandRev)*100).toFixed(1):0,mc2=gp>=0?"#22c55e":"#ef4444";
+  sm.innerHTML="";
+  sm.innerHTML+="<div class=\"card\" style=\"padding:16px;border-top:3px solid #22c55e\"><div style=\"font-size:11px;color:var(--text-muted)\">Total Revenue</div><div style=\"font-size:22px;font-weight:700;color:#22c55e\">$"+grandRev.toFixed(2)+"</div></div>";
+  sm.innerHTML+="<div class=\"card\" style=\"padding:16px;border-top:3px solid #ef4444\"><div style=\"font-size:11px;color:var(--text-muted)\">Agent Cost</div><div style=\"font-size:22px;font-weight:700;color:#ef4444\">$"+grandCost.toFixed(2)+"</div></div>";
+  sm.innerHTML+="<div class=\"card\" style=\"padding:16px;border-top:3px solid "+mc2+"\"><div style=\"font-size:11px;color:var(--text-muted)\">Gross Profit</div><div style=\"font-size:22px;font-weight:700;color:"+mc2+"\">$"+gp.toFixed(2)+"</div></div>";
+  sm.innerHTML+="<div class=\"card\" style=\"padding:16px;border-top:3px solid "+mc2+"\"><div style=\"font-size:11px;color:var(--text-muted)\">Margin</div><div style=\"font-size:22px;font-weight:700;color:"+mc2+"\">"+gm+"%</div></div>";
+  var live=plans.filter(function(p){return p.status==="Live"||p.status==="Scaling";}).length;
+  sm.innerHTML+="<div class=\"card\" style=\"padding:16px;border-top:3px solid #8b5cf6\"><div style=\"font-size:11px;color:var(--text-muted)\">Active Clients</div><div style=\"font-size:22px;font-weight:700;color:#8b5cf6\">"+live+"</div></div>";
+}
+var _origGo=window.go;
+window.go=function(page,el){
+  _origGo(page,el);
+  if(page==="kpi") setTimeout(loadKPI,100);
+  else if(page==="skills") setTimeout(loadSkills,100);
+  else if(page==="overtime") setTimeout(loadOvertime,100);
+  else if(page==="client-planner") setTimeout(loadClientPlanner,100);
+  else if(page==="profitability") setTimeout(loadProfitability,100);
+};
+window.loadKPI=loadKPI;window.openKPIModal=openKPIModal;window.saveKPI=saveKPI;window.editKPI=editKPI;window.deleteKPI=deleteKPI;window.exportKPICSV=exportKPICSV;window.calcKPIScore=calcKPIScore;
+window.loadSkills=loadSkills;window.openSkillModal=openSkillModal;window.saveSkill=saveSkill;window.editSkill=editSkill;window.deleteSkill=deleteSkill;
+window.loadOvertime=loadOvertime;window.openOTModal=openOTModal;window.saveOT=saveOT;window.editOT=editOT;window.deleteOT=deleteOT;window.approveOT=approveOT;window.exportOTCSV=exportOTCSV;
+window.loadClientPlanner=loadClientPlanner;window.openClientPlanModal=openClientPlanModal;window.saveClientPlan=saveClientPlan;window.editClientPlan=editClientPlan;window.addCommNote=addCommNote;window.checkUnderstaffing=checkUnderstaffing;
+window.loadProfitability=loadProfitability;
 })();
 </script>
 </body></html>
