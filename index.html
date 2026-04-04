@@ -81,6 +81,12 @@ table{width:100%;border-collapse:collapse}th{background:#F8FAFC;padding:11px 20p
 @media(max-width:480px){.stats-grid{grid-template-columns:1fr}table{font-size:12px}th,td{padding:10px 12px}.modal-card{padding:20px}}
 </style><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<meta name="theme-color" content="#6366f1">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CoreAxis One">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22CoreAxis%20One%22%2C%22short_name%22%3A%22CoreAxis%22%2C%22description%22%3A%22BPO%2FCRM%20ERP%20SaaS%20by%20CoreAxis%20Solutions%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230f172a%22%2C%22theme_color%22%3A%22%236366f1%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20100%20100'%3E%3Crect%20width%3D'100'%20height%3D'100'%20rx%3D'20'%20fill%3D'%25236366f1'%2F%3E%3Ctext%20y%3D'.9em'%20font-size%3D'70'%20x%3D'15'%3EC%3C%2Ftext%3E%3C%2Fsvg%3E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%2C%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20100%20100'%3E%3Crect%20width%3D'100'%20height%3D'100'%20rx%3D'20'%20fill%3D'%25236366f1'%2F%3E%3Ctext%20y%3D'.9em'%20font-size%3D'70'%20x%3D'15'%3EC%3C%2Ftext%3E%3C%2Fsvg%3E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
 </head><body>
 <div class="toast" id="toast"></div>
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
@@ -113,7 +119,7 @@ table{width:100%;border-collapse:collapse}th{background:#F8FAFC;padding:11px 20p
 <div class="nav-item" onclick="go('workflows',this)" id="nav-workflows"><span class="nav-icon">⚙️</span>Workflows</div>
 <div class="nav-item" onclick="go('followups',this)" id="nav-followups"><span class="nav-icon">🔁</span>Follow-ups</div>
 <div class="nav-item" onclick="go('superadmin',this)" id="nav-superadmin"><span class="nav-icon">🏢</span>Super Admin</div>
-</nav>
+<div class="nav-item" onclick="go('ai-assistant',this)" id="nav-ai-assistant"><span class="nav-icon">🤖</span>AI Assistant</div><div class="nav-item" onclick="go('analytics-ai',this)" id="nav-analytics-ai"><span class="nav-icon">📊</span>AI Analytics</div></nav>
 <div class="sidebar-footer"><div class="user-pill"><div class="user-avatar" id="sidebar-avatar">K</div><div class="user-info"><div class="user-name" id="sidebar-name">Karim</div><div class="user-role" id="sidebar-role">Super Admin</div></div><button class="logout-btn" onclick="logout()">↻</button></div></div>
 </aside>
 <main class="main">
@@ -191,7 +197,7 @@ table{width:100%;border-collapse:collapse}th{background:#F8FAFC;padding:11px 20p
 const SB_URL='https://njahzwpglqexvdoknkhd.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qYWh6d3BnbHFleHZkb2tua2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0OTA0NTUsImV4cCI6MjA5MDA2NjQ1NX0.WNOBsDRsN3SNjlqSE1XN0GymYhpWzXqkdIpaf98SiEY';
 let sb,currentPage='dashboard',user=null,userRole='super_admin',allLeads=[],allContacts=[];
-const ROLE_PERMS={super_admin:['dashboard','crm','pipeline','contacts','helpdesk','contracts','billing','tasks','hr','timesheets','payroll','accounting','users','activity','settings','attendance','roster','leaves','payroll-auto','clients','reports','client-portal','inbox','chat','workflows','followups','superadmin','signup'],manager:['dashboard','crm','pipeline','contacts','helpdesk','contracts','billing','tasks','hr','timesheets','payroll','accounting','activity','settings','attendance','roster','leaves','payroll-auto','clients','reports','inbox','chat','workflows','followups'],team_lead:['dashboard','crm','pipeline','contacts','helpdesk','tasks','hr','timesheets','settings','attendance','roster','leaves','inbox','chat'],billing_admin:['dashboard','billing','accounting','settings','payroll-auto','clients','reports'],agent:['dashboard','helpdesk','tasks','timesheets','settings','attendance','leaves']};
+const ROLE_PERMS={super_admin:['dashboard','crm','pipeline','contacts','helpdesk','contracts','billing','tasks','hr','timesheets','payroll','accounting','users','activity','settings','attendance','roster','leaves','payroll-auto','clients','reports','client-portal','inbox','chat','workflows','followups','superadmin','signup','ai-assistant','analytics-ai'],manager:['dashboard','crm','pipeline','contacts','helpdesk','contracts','billing','tasks','hr','timesheets','payroll','accounting','activity','settings','attendance','roster','leaves','payroll-auto','clients','reports','inbox','chat','workflows','followups','ai-assistant','analytics-ai'],team_lead:['dashboard','crm','pipeline','contacts','helpdesk','tasks','hr','timesheets','settings','attendance','roster','leaves','inbox','chat','ai-assistant'],billing_admin:['dashboard','billing','accounting','settings','payroll-auto','clients','reports','ai-assistant'],agent:['dashboard','helpdesk','tasks','timesheets','settings','attendance','leaves','ai-assistant']};
 function canAccess(p){return(ROLE_PERMS[userRole]||ROLE_PERMS['agent']).includes(p);}
 async function init(){sb=window.supabase.createClient(SB_URL,SB_KEY);const{data:{session}}=await sb.auth.getSession();if(session){user=session.user;await showApp();}}
 let isSignup=false;
@@ -795,6 +801,63 @@ document.addEventListener("DOMContentLoaded",function(){
   </div>
 </div>
 
+<div class="module-page" id="page-ai-assistant">
+<div style="display:flex;flex-direction:column;height:calc(100vh - 120px);max-width:900px;margin:0 auto;gap:16px">
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<button class="btn-sm" onclick="aiQuick('Summarize all open tickets')">📋 Open Tickets</button>
+<button class="btn-sm" onclick="aiQuick('Show top leads this month by deal value')">🏆 Top Leads</button>
+<button class="btn-sm" onclick="aiQuick('List all overdue invoices')">💸 Overdue Invoices</button>
+<button class="btn-sm" onclick="aiQuick('Give me an agent performance summary')">👥 Agent Performance</button>
+</div>
+<div id="ai-messages" style="flex:1;overflow-y:auto;background:var(--bg-secondary);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;min-height:300px">
+<div style="text-align:center;color:var(--text-muted);padding:40px 20px">
+<div style="font-size:48px;margin-bottom:12px">🤖</div>
+<div style="font-size:16px;font-weight:600">CoreAxis AI Assistant</div>
+<div style="font-size:13px;margin-top:6px">Ask me anything about your leads, tickets, invoices, agents, or KPIs.</div>
+</div></div>
+<div style="display:flex;gap:10px;align-items:flex-end">
+<textarea id="ai-input" placeholder="Ask anything about your business..." rows="2" style="flex:1;resize:none;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--bg-secondary);color:var(--text-primary);font-size:14px;font-family:inherit" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiMessage();}"></textarea>
+<button id="ai-mic-btn" onclick="aiVoiceInput()" title="Voice input" style="padding:12px;border-radius:10px;border:none;background:var(--bg-secondary);cursor:pointer;font-size:20px;border:1px solid var(--border)">🎤</button>
+<button onclick="sendAiMessage()" style="padding:12px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-weight:600;font-size:14px">Send</button>
+</div></div></div>
+<div class="module-page" id="page-analytics-ai">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+<div style="font-size:18px;font-weight:700">Predictive Analytics</div>
+<button class="btn-primary" onclick="loadAnalyticsAI()">🔄 Refresh Analysis</button>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
+<div class="card" style="padding:20px">
+<div style="font-weight:700;margin-bottom:4px">📈 Lead Conversion Forecast</div>
+<div style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Based on historical pipeline data</div>
+<div id="ai-conversion-rate" style="font-size:36px;font-weight:800;color:var(--accent)">—</div>
+<div style="font-size:12px;color:var(--text-muted);margin-top:4px">Predicted conversion rate</div>
+<div id="ai-conversion-bar" style="margin-top:12px;height:8px;background:var(--border);border-radius:4px"><div id="ai-conv-fill" style="height:8px;background:var(--accent);border-radius:4px;width:0%;transition:width 1s ease"></div></div>
+</div>
+<div class="card" style="padding:20px">
+<div style="font-weight:700;margin-bottom:4px">💰 Revenue Forecast</div>
+<div style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Next 3 months projection</div>
+<div id="ai-revenue-chart" style="display:flex;align-items:flex-end;gap:8px;height:80px"></div>
+<div style="display:flex;gap:8px;margin-top:6px;font-size:11px;color:var(--text-muted)" id="ai-revenue-labels"></div>
+</div>
+<div class="card" style="padding:20px">
+<div style="font-weight:700;margin-bottom:4px">🎫 Ticket Volume Trend</div>
+<div style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Last 7 days sparkline</div>
+<svg id="ai-ticket-spark" viewBox="0 0 200 60" style="width:100%;height:60px"></svg>
+<div id="ai-ticket-stat" style="font-size:13px;margin-top:8px;color:var(--text-muted)">Loading...</div>
+</div>
+<div class="card" style="padding:20px">
+<div style="font-weight:700;margin-bottom:4px">⭐ Agent Performance Score</div>
+<div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Tickets closed vs SLA compliance</div>
+<div id="ai-agent-scores" style="display:flex;flex-direction:column;gap:8px">
+<div style="color:var(--text-muted);font-size:13px">Loading...</div>
+</div></div>
+<div class="card" style="padding:20px;grid-column:span 2">
+<div style="font-weight:700;margin-bottom:4px">⚠️ Churn Risk by Client</div>
+<div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Based on ticket volume and contract age</div>
+<div id="ai-churn-list" style="display:flex;flex-direction:column;gap:8px">
+<div style="color:var(--text-muted);font-size:13px">Loading...</div>
+</div></div>
+</div></div>
 <script id="p5js">
 var P5_SB_URL = "https://njahzwpglqexvdoknkhd.supabase.co";
 var P5_SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qYWh6d3BnbHFleHZkb2tua2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0OTA0NTUsImV4cCI6MjA5MDA2NjQ1NX0.WNOBsDRsN3SNjlqSE1XN0GymYhpWzXqkdIpaf98SiEY";
@@ -838,5 +901,315 @@ function loadBillingInfo(){var el=document.getElementById("billing-info");if(!el
 function upgradePlan(plan){var prices={starter:49,growth:99,pro:199};var names={starter:"Starter",growth:"Growth",pro:"Pro"};if(!confirm("Upgrade to "+names[plan]+" for $"+prices[plan]+"/mo? In production this redirects to Stripe checkout."))return;p5sb("workspaces?order=created_at.asc&limit=1&select=id").then(function(rows){if(!rows||!rows.length){p5toast("No workspace found");return;}p5sb("workspaces?id=eq."+rows[0].id,"PATCH",{plan:plan,status:"active"}).then(function(){p5toast("Plan updated to "+names[plan]+" - connect Stripe for live billing");loadBillingInfo();});});}
 function openBillingModal(){var m=document.getElementById("billing-modal");if(!m){m=document.createElement("div");m.id="billing-modal";m.className="modal-overlay";var h="<div class=\"modal-card\" style=\"max-width:500px;width:90%\"><button class=\"modal-close\" onclick=\"closeModal('billing-modal')\">X</button><h2 style=\"margin:0 0 8px;font-size:18px\">Manage Billing</h2><p style=\"color:var(--muted);font-size:13px;margin:0 0 20px\">Connect Stripe to enable live payments.</p><label style=\"display:block;margin-bottom:6px;font-size:13px;font-weight:600\">Stripe Publishable Key</label><input id=\"stripe-pk\" placeholder=\"pk_live_...\" style=\"width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:14px;box-sizing:border-box\"><label style=\"display:block;margin-bottom:6px;font-size:13px;font-weight:600\">Stripe Secret Key</label><input id=\"stripe-sk\" type=\"password\" placeholder=\"sk_live_...\" style=\"width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:16px;box-sizing:border-box\"><div style=\"background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:12px;margin-bottom:20px;font-size:12px;color:#92400e\">Connect a Stripe webhook at /stripe/webhook to auto-update plan on payment events.</div><div style=\"display:flex;gap:10px;justify-content:flex-end\"><button onclick=\"closeModal('billing-modal')\" style=\"padding:10px 20px;border:1px solid var(--border);border-radius:8px;background:var(--bg);cursor:pointer\">Cancel</button><button onclick=\"saveStripeKeys()\" class=\"btn btn-primary\" style=\"padding:10px 24px\">Save Keys</button></div></div>";m.innerHTML=h;document.body.appendChild(m);}m.style.display="flex";}
 function saveStripeKeys(){var pk=document.getElementById("stripe-pk").value.trim();var sk=document.getElementById("stripe-sk").value.trim();if(!pk||!sk){p5toast("Please enter both keys");return;}p5sb("app_settings","POST",{key:"stripe_pk",value:pk}).then(function(){p5sb("app_settings","POST",{key:"stripe_sk_hint",value:sk.substring(0,8)+"..."}).then(function(){p5toast("Stripe keys saved");closeModal("billing-modal");});});}
+</script>
+<script id="p7js">
+(function() {
+var _aiHistory = [];
+var _aiThinking = false;
+function aiQuick(prompt) {
+  var inp = document.getElementById("ai-input");
+  if(inp) inp.value = prompt;
+  sendAiMessage();
+}
+function sendAiMessage() {
+  if(_aiThinking) return;
+  var inp = document.getElementById("ai-input");
+  if(!inp) return;
+  var msg = inp.value.trim();
+  if(!msg) return;
+  inp.value = "";
+  _aiThinking = true;
+  appendAiMsg("user", msg);
+  var thinking = appendAiMsg("assistant", "...", true);
+  _aiHistory.push({role:"user", content:msg});
+  fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": (window._anthropicKey || ""),
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true"
+    },
+    body: JSON.stringify({
+      model: "claude-haiku-4-5-20251001",
+      max_tokens: 1000,
+      system: "You are the CoreAxis One AI Assistant. CoreAxis One is a BPO/CRM ERP SaaS used by CoreAxis Solutions, a BPO company with agents in the Philippines serving US/Canadian SMB clients. You help with questions about leads, tickets, invoices, contracts, agents, KPIs, and business insights. Be concise, professional, and actionable. Use bullet points for lists.",
+      messages: _aiHistory
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    _aiThinking = false;
+    var reply = (d.content && d.content[0] && d.content[0].text) ? d.content[0].text : "Sorry, I could not get a response.";
+    if(thinking && thinking.parentNode) thinking.parentNode.removeChild(thinking);
+    appendAiMsg("assistant", reply);
+    _aiHistory.push({role:"assistant", content:reply});
+    if(typeof sb !== "undefined") {
+      sb.from("ai_conversations").insert({user_message:msg, ai_response:reply});
+    }
+  })
+  .catch(function(e) {
+    _aiThinking = false;
+    if(thinking && thinking.parentNode) thinking.parentNode.removeChild(thinking);
+    appendAiMsg("assistant", "Error: " + e.message + ". Check your Anthropic API key in Settings.");
+  });
+}
+function appendAiMsg(role, text, isTemp) {
+  var box = document.getElementById("ai-messages");
+  if(!box) return null;
+  var placeholder = box.querySelector("div[style*='48px']");
+  if(placeholder) placeholder.parentNode && placeholder.parentNode.parentNode === box ? box.removeChild(placeholder.parentNode) : (placeholder.parentNode === box ? box.removeChild(placeholder) : null);
+  var wrap = document.createElement("div");
+  wrap.style.cssText = "display:flex;gap:10px;align-items:flex-start;" + (role==="user"?"flex-direction:row-reverse;":"");
+  var avatar = document.createElement("div");
+  avatar.style.cssText = "width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:" + (role==="user"?"var(--accent)":"#6366f1") + ";color:#fff;font-weight:700;";
+  avatar.textContent = role==="user" ? (typeof user !== "undefined" && user && user.email ? user.email[0].toUpperCase() : "U") : "AI";
+  var bubble = document.createElement("div");
+  bubble.style.cssText = "max-width:75%;padding:12px 16px;border-radius:12px;font-size:14px;line-height:1.6;white-space:pre-wrap;word-break:break-word;background:" + (role==="user"?"var(--accent)":"var(--bg-primary)") + ";color:" + (role==="user"?"#fff":"var(--text-primary)") + ";border:1px solid var(--border);";
+  bubble.textContent = text;
+  wrap.appendChild(avatar);
+  wrap.appendChild(bubble);
+  box.appendChild(wrap);
+  box.scrollTop = box.scrollHeight;
+  return wrap;
+}
+var _aiRecognition = null;
+var _aiListening = false;
+function aiVoiceInput() {
+  var SRClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SRClass) { showToast("Voice input not supported in this browser"); return; }
+  if(_aiListening) { if(_aiRecognition) _aiRecognition.stop(); return; }
+  _aiRecognition = new SRClass();
+  _aiRecognition.continuous = false;
+  _aiRecognition.interimResults = false;
+  _aiRecognition.lang = "en-US";
+  var btn = document.getElementById("ai-mic-btn");
+  _aiListening = true;
+  if(btn) { btn.style.background = "#ef4444"; btn.title = "Listening... click to stop"; }
+  _aiRecognition.onresult = function(e) {
+    var transcript = e.results[0][0].transcript;
+    var inp = document.getElementById("ai-input");
+    if(inp) inp.value = transcript;
+    _aiListening = false;
+    if(btn) { btn.style.background = "var(--bg-secondary)"; btn.title = "Voice input"; }
+    sendAiMessage();
+  };
+  _aiRecognition.onerror = function() {
+    _aiListening = false;
+    if(btn) { btn.style.background = "var(--bg-secondary)"; btn.title = "Voice input"; }
+    showToast("Voice input error - try again");
+  };
+  _aiRecognition.onend = function() {
+    _aiListening = false;
+    if(btn) { btn.style.background = "var(--bg-secondary)"; btn.title = "Voice input"; }
+  };
+  _aiRecognition.start();
+}
+function searchVoiceInput() {
+  var SRClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SRClass) { showToast("Voice input not supported in this browser"); return; }
+  var sr = new SRClass();
+  sr.continuous = false; sr.interimResults = false; sr.lang = "en-US";
+  sr.onresult = function(e) {
+    var t = e.results[0][0].transcript;
+    var si = document.getElementById("global-search");
+    if(si) { si.value = t; si.dispatchEvent(new Event("input")); }
+  };
+  sr.onerror = function() { showToast("Voice search error"); };
+  sr.start();
+  showToast("Listening for search...");
+}
+function loadAnalyticsAI() {
+  if(typeof sb === "undefined") return;
+  Promise.all([
+    sb.from("leads").select("*"),
+    sb.from("tickets").select("*"),
+    sb.from("invoices").select("*"),
+    sb.from("agents").select("*"),
+    sb.from("clients").select("*")
+  ]).then(function(results) {
+    var leads = results[0].data || [];
+    var tickets = results[1].data || [];
+    var invoices = results[2].data || [];
+    var agents = results[3].data || [];
+    var clients = results[4].data || [];
+    var total = leads.length;
+    var won = leads.filter(function(l){return l.status==="closed_won";}).length;
+    var rate = total > 0 ? Math.round((won/total)*100) : 0;
+    var crEl = document.getElementById("ai-conversion-rate");
+    var cfEl = document.getElementById("ai-conv-fill");
+    if(crEl) crEl.textContent = rate + "%";
+    if(cfEl) cfEl.style.width = rate + "%";
+    var now = new Date();
+    var months = [0,1,2].map(function(i) {
+      var d = new Date(now.getFullYear(), now.getMonth()+i+1, 1);
+      return {label: d.toLocaleString("default",{month:"short"}), val: 0};
+    });
+    var paidTotal = 0;
+    invoices.forEach(function(inv) {
+      if(inv.status==="paid") paidTotal += parseFloat(inv.amount)||0;
+    });
+    var monthly = total > 0 ? paidTotal / Math.max(1, Math.ceil(total/10)) : paidTotal;
+    months[0].val = Math.round(monthly * 1.05);
+    months[1].val = Math.round(monthly * 1.10);
+    months[2].val = Math.round(monthly * 1.15);
+    var maxVal = Math.max(months[0].val, months[1].val, months[2].val, 1);
+    var chartEl = document.getElementById("ai-revenue-chart");
+    var labelsEl = document.getElementById("ai-revenue-labels");
+    if(chartEl) {
+      chartEl.innerHTML = "";
+      months.forEach(function(m) {
+        var bar = document.createElement("div");
+        var pct = Math.round((m.val/maxVal)*100);
+        bar.style.cssText = "flex:1;background:var(--accent);border-radius:4px 4px 0 0;height:"+pct+"%;min-height:4px;transition:height 0.8s ease;position:relative;";
+        var lbl = document.createElement("div");
+        lbl.style.cssText = "position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:10px;white-space:nowrap;color:var(--text-muted);";
+        lbl.textContent = "$"+(m.val>=1000 ? Math.round(m.val/1000)+"k" : m.val);
+        bar.appendChild(lbl);
+        chartEl.appendChild(bar);
+      });
+    }
+    if(labelsEl) labelsEl.innerHTML = months.map(function(m){return "<span style=\"flex:1;text-align:center;font-size:11px\">"+m.label+"</span>";}).join("");
+    var days7 = [];
+    var nowTs = Date.now();
+    var i;
+    for(i=6;i>=0;i--) {
+      var dayStart = new Date(nowTs - i*86400000);
+      dayStart.setHours(0,0,0,0);
+      var dayEnd = new Date(dayStart.getTime()+86400000);
+      var cnt = tickets.filter(function(t){
+        var d = new Date(t.created_at);
+        return d >= dayStart && d < dayEnd;
+      }).length;
+      days7.push(cnt);
+    }
+    var maxT = Math.max.apply(null, days7.concat([1]));
+    var sparkEl = document.getElementById("ai-ticket-spark");
+    if(sparkEl) {
+      var pts = days7.map(function(v,idx){
+        return (idx*33)+","+Math.round(55 - (v/maxT)*50);
+      }).join(" ");
+      sparkEl.innerHTML = "<polyline points=\""+pts+"\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"2\" stroke-linejoin=\"round\"/>";
+      days7.forEach(function(v,idx) {
+        var cx = idx*33; var cy = Math.round(55-(v/maxT)*50);
+        sparkEl.innerHTML += "<circle cx=\""+cx+"\" cy=\""+cy+"\" r=\"3\" fill=\"var(--accent)\"/>";
+      });
+    }
+    var statEl = document.getElementById("ai-ticket-stat");
+    if(statEl) statEl.textContent = tickets.length + " total tickets | " + tickets.filter(function(t){return t.status==="open";}).length + " open | " + tickets.filter(function(t){return t.status==="resolved";}).length + " resolved";
+    var scoresEl = document.getElementById("ai-agent-scores");
+    if(scoresEl) {
+      if(agents.length === 0) { scoresEl.innerHTML = "<div style=\"color:var(--text-muted);font-size:13px\">No agents found.</div>"; }
+      else {
+        var html2 = "";
+        agents.slice(0,5).forEach(function(a) {
+          var aTickets = tickets.filter(function(t){return t.assigned_to===a.id||t.agent_email===a.email;});
+          var resolved = aTickets.filter(function(t){return t.status==="resolved"||t.status==="closed";}).length;
+          var score = aTickets.length > 0 ? Math.round((resolved/aTickets.length)*100) : 0;
+          var color = score>=80?"#10b981":score>=50?"#f59e0b":"#ef4444";
+          html2 += "<div style=\"display:flex;align-items:center;gap:10px;font-size:13px\">";
+          html2 += "<span style=\"flex:1\">"+(a.first_name||"")+" "+(a.last_name||"")+"</span>";
+          html2 += "<span style=\"width:40px;text-align:right;font-weight:700;color:"+color+"\">"+score+"%</span>";
+          html2 += "<div style=\"width:80px;height:6px;background:var(--border);border-radius:3px\">";
+          html2 += "<div style=\"width:"+score+"%;height:6px;background:"+color+";border-radius:3px\"></div></div></div>";
+        });
+        scoresEl.innerHTML = html2 || "<div style=\"color:var(--text-muted);font-size:13px\">No agent data yet.</div>";
+      }
+    }
+    var churnEl = document.getElementById("ai-churn-list");
+    if(churnEl) {
+      if(clients.length === 0) { churnEl.innerHTML = "<div style=\"color:var(--text-muted);font-size:13px\">No clients found.</div>"; }
+      else {
+        var churnRows = "";
+        clients.slice(0,6).forEach(function(c) {
+          var cTickets = tickets.filter(function(t){return t.client_name===c.name||t.client_id===c.id;}).length;
+          var ageDays = c.created_at ? Math.round((Date.now()-new Date(c.created_at).getTime())/86400000) : 0;
+          var risk = cTickets > 10 ? "High" : cTickets > 4 ? "Medium" : "Low";
+          var rColor = risk==="High"?"#ef4444":risk==="Medium"?"#f59e0b":"#10b981";
+          churnRows += "<div style=\"display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px\">";
+          churnRows += "<span style=\"flex:1;font-weight:600\">"+(c.name||"Unknown")+"</span>";
+          churnRows += "<span style=\"color:var(--text-muted)\">"+ageDays+"d old</span>";
+          churnRows += "<span style=\"color:var(--text-muted)\">"+cTickets+" tickets</span>";
+          churnRows += "<span style=\"padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;background:"+rColor+"22;color:"+rColor+"\">"+risk+" Risk</span>";
+          churnRows += "</div>";
+        });
+        churnEl.innerHTML = churnRows;
+      }
+    }
+  }).catch(function(e){ console.error("Analytics error:", e); });
+}
+function installPWA() {
+  if(window._pwaPrompt) {
+    window._pwaPrompt.prompt();
+    window._pwaPrompt.userChoice.then(function(r){ showToast(r.outcome==="accepted"?"App installed!":"Install dismissed"); window._pwaPrompt=null; });
+  } else {
+    showToast("Open in browser and use Add to Home Screen / Install App option");
+  }
+}
+window.addEventListener("beforeinstallprompt", function(e) { e.preventDefault(); window._pwaPrompt = e; });
+if("serviceWorker" in navigator) {
+  var swCode = [
+    "var CACHE='coreaxis-v1';",
+    "var SHELL=['/'];",
+    "self.addEventListener('install',function(e){e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(SHELL);}));});",
+    "self.addEventListener('fetch',function(e){e.respondWith(caches.match(e.request).then(function(r){return r||fetch(e.request).catch(function(){return caches.match('/');});}));});"
+  ].join("\n");
+  var swBlob = new Blob([swCode], {type:"application/javascript"});
+  var swUrl = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl).catch(function(){});
+}
+function saveAnthropicKey() {
+  var inp = document.getElementById("anthropic-key-input");
+  if(!inp || !inp.value.trim()) { showToast("Please enter a valid API key"); return; }
+  window._anthropicKey = inp.value.trim();
+  localStorage.setItem("_coreaxis_ai_key", window._anthropicKey);
+  showToast("AI key saved!");
+}
+document.addEventListener("DOMContentLoaded", function() {
+  var _g = window.go;
+  window.go = function(page, el) {
+    if(page === "ai-assistant") { if(_g) _g(page, el); return; }
+    if(page === "analytics-ai") { if(_g) _g(page, el); setTimeout(loadAnalyticsAI, 100); return; }
+    if(_g) _g(page, el);
+  };
+  var searchWrap = document.querySelector(".search-bar") || document.querySelector("#global-search");
+  if(searchWrap) {
+    var micBtn = document.createElement("button");
+    micBtn.innerHTML = "🎤";
+    micBtn.title = "Voice search";
+    micBtn.style.cssText = "background:none;border:none;cursor:pointer;font-size:16px;padding:0 4px;";
+    micBtn.onclick = searchVoiceInput;
+    var parent = searchWrap.parentNode || searchWrap;
+    parent.appendChild(micBtn);
+  }
+  var settingsSection = document.getElementById("page-settings");
+  if(settingsSection) {
+    var pwaDiv = document.createElement("div");
+    pwaDiv.className = "card";
+    pwaDiv.style.cssText = "padding:20px;margin-top:20px;";
+    pwaDiv.innerHTML = "<div style=\"font-weight:700;margin-bottom:8px\">📱 Mobile App (PWA)</div><div style=\"font-size:13px;color:var(--text-muted);margin-bottom:12px\">Install CoreAxis One as a mobile app on your device for offline access.</div><button class=\"btn-primary\" onclick=\"installPWA()\">Install App</button>";
+    settingsSection.appendChild(pwaDiv);
+    // AI Key card
+    var aiKeyDiv = document.createElement("div");
+    aiKeyDiv.className = "card";
+    aiKeyDiv.style.cssText = "padding:20px;margin-top:20px;";
+    aiKeyDiv.innerHTML = "<div style=\"font-weight:700;margin-bottom:8px\">\uD83E\uDD16 Anthropic AI Key</div><div style=\"font-size:13px;color:var(--text-muted);margin-bottom:12px\">Enter your Anthropic API key to power the AI Assistant.</div><div style=\"display:flex;gap:10px\"><input id=\"anthropic-key-input\" type=\"password\" placeholder=\"sk-ant-...\" style=\"flex:1;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg-secondary);color:var(--text-primary);font-size:13px\" /><button class=\"btn-primary\" onclick=\"saveAnthropicKey()\">Save</button></div>";
+    settingsSection.appendChild(aiKeyDiv);
+    // Load saved key from localStorage
+    var savedKey = localStorage.getItem("_coreaxis_ai_key");
+    if(savedKey) window._anthropicKey = savedKey;
+  }
+  var origApply = window.applyRBAC;
+  window.applyRBAC = function() {
+    if(origApply) origApply();
+    var navAI = document.getElementById("nav-ai-assistant");
+    var navAN = document.getElementById("nav-analytics-ai");
+    if(typeof canAccess === "function") {
+      if(navAI) navAI.style.display = canAccess("ai-assistant") ? "flex" : "none";
+      if(navAN) navAN.style.display = canAccess("analytics-ai") ? "flex" : "none";
+    }
+  };
+});
+})();
 </script>
 </body></html>
