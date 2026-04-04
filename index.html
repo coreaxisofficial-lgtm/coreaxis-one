@@ -859,7 +859,7 @@ document.addEventListener("DOMContentLoaded",function(){
 <div style="color:var(--text-muted);font-size:13px">Loading...</div>
 </div></div>
 </div></div>
-<div id="page-kpi" class="page" style="display:none">
+<div id="page-kpi" class="module-page">
 <div class="page-header"><h1 class="page-title">KPI Tracker</h1>
 <div style="display:flex;gap:10px;flex-wrap:wrap">
 <select id="kpi-agent-filter" onchange="loadKPI()" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text)"><option value="">All Agents</option></select>
@@ -872,14 +872,14 @@ document.addEventListener("DOMContentLoaded",function(){
 <div class="table-wrap"><table class="table"><thead><tr><th>Agent</th><th>Month</th><th>CSAT%</th><th>QA Score</th><th>AHT</th><th>Adherence%</th><th>Bonus</th><th>Score</th><th>Actions</th></tr></thead>
 <tbody id="kpi-table-body"></tbody></table></div></div>
 </div>
-<div id="page-skills" class="page" style="display:none">
+<div id="page-skills" class="module-page">
 <div class="page-header"><h1 class="page-title">Skills Matrix</h1>
 <button class="btn" onclick="openSkillModal()">+ Add Skill Record</button></div>
 <div class="card"><div class="card-header"><h3>Agent Skills Overview</h3></div>
 <div class="table-wrap"><table class="table"><thead><tr><th>Agent</th><th>Role</th><th>Department</th><th>Skills</th><th>Language</th><th>Certifications</th><th>Level</th><th>Actions</th></tr></thead>
 <tbody id="skills-table-body"></tbody></table></div></div>
 </div>
-<div id="page-overtime" class="page" style="display:none">
+<div id="page-overtime" class="module-page">
 <div class="page-header"><h1 class="page-title">Overtime Tracker</h1>
 <div style="display:flex;gap:10px;flex-wrap:wrap">
 <select id="ot-agent-filter" onchange="loadOvertime()" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text)"><option value="">All Agents</option></select>
@@ -892,12 +892,12 @@ document.addEventListener("DOMContentLoaded",function(){
 <div class="table-wrap"><table class="table"><thead><tr><th>Agent</th><th>Date</th><th>Reg Hrs</th><th>OT Hours</th><th>Rate</th><th>OT Pay</th><th>Status</th><th>Actions</th></tr></thead>
 <tbody id="ot-table-body"></tbody></table></div></div>
 </div>
-<div id="page-client-planner" class="page" style="display:none">
+<div id="page-client-planner" class="module-page">
 <div class="page-header"><h1 class="page-title">Client Planner</h1>
 <button class="btn" onclick="openClientPlanModal()">+ Add Client Plan</button></div>
 <div id="client-plan-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px"></div>
 </div>
-<div id="page-profitability" class="page" style="display:none">
+<div id="page-profitability" class="module-page">
 <div class="page-header"><h1 class="page-title">Profitability Dashboard</h1>
 <button class="btn btn-secondary" onclick="loadProfitability()">Refresh</button></div>
 <div id="profit-summary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:20px"></div>
@@ -1267,6 +1267,11 @@ window.installPWA       = installPWA;
 window.appendAiMsg      = appendAiMsg;
 })();
 </script>
+<script id="p8js">
+(function(){
+var SB8="https://njahzwpglqexvdoknkhd.supabase.co";
+var SK8="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qYWh6d3BnbHFleHZkb2tua2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0OTA0NTUsImV4cCI6MjA5MDA2NjQ1NX0.WNOBsDRsN3SNjlqSE1XN0GymYhpWzXqkdIpaf98SiEY";
+function p8sb(path,method,body){var opts={method:method||"GET",headers:{"Content-Type":"application/json","apikey":SK8,"Authorization":"Bearer "+SK8,"Prefer":"return=representation"}};if(body) opts.body=JSON.stringify(body);return fetch(SB8+"/rest/v1/"+path,opts).then(function(r){return r.json();});}
 <script id="p8js">
 (function(){
 var SB8="https://njahzwpglqexvdoknkhd.supabase.co";
