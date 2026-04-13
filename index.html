@@ -212,9 +212,9 @@ function sBadge(s){return{new:'bg-purple',contacted:'bg-blue',qualified:'bg-gree
 async function loadDashboard(){checkContractRenewals();const[{data:leads},{data:agents},{data:tickets},{data:invoices}]=await Promise.all([sb.from('leads').select('*').order('created_at',{ascending:false}),sb.from('agents').select('*'),sb.from('tickets').select('*'),sb.from('invoices').select('*')]);allLeads=leads||[];document.getElementById('d-leads').textContent=allLeads.length;document.getElementById('d-agents').textContent=(agents||[]).filter(a=>a.status==='active').length;document.getElementById('d-tickets').textContent=(tickets||[]).filter(t=>t.status==='open').length;const rev=allLeads.filter(l=>l.status==='closed_won').reduce((s,l)=>s+(l.deal_value||0),0);document.getElementById('d-revenue').textContent='$'+rev.toLocaleString();const recent=allLeads.slice(0,5);document.getElementById('dash-leads').innerHTML=recent.length?recent.map(l=>'<div class="pipeline-item"><div class="pipeline-dot" style="background:'+sColor(l.status)+'"></div><div class="pipeline-name">'+(l.first_name||'')+' '+(l.last_name||'')+'<br><small style="color:var(--muted)">'+(l.company||'&mdash;')+'</small></div><span class="badge '+sBadge(l.status)+'">'+l.status+'</span></div>').join(''):'<div style="color:var(--muted);font-size:13px;padding:16px 0">No leads yet.</div>';loadCRM(allLeads);loadPipeline(allLeads);loadContacts(allLeads);loadHR(agents||[]);loadHelpdesk(tickets||[]);loadBilling(invoices||[]);loadDashboardActivity();}
 async function loadDashboardActivity(){const{data}=await sb.from('activity_log').select('*').order('created_at',{ascending:false}).limit(5);const el=document.getElementById('dash-activity');if(!data||!data.length){el.innerHTML='<div class="activity-item"><div class="activity-dot" style="background:#6366F1"></div><div><div class="activity-text">CoreAxis One active</div><div class="activity-time">Just now</div></div></div>';return;}el.innerHTML=data.map(a=>'<div class="activity-item"><div class="activity-dot" style="background:#6366F1"></div><div><div class="activity-text">'+(a.action||'&mdash;')+'</div><div class="activity-time">'+timeAgo(a.created_at)+'</div></div></div>').join('');}
 function timeAgo(ts){if(!ts)return'&mdash;';const d=new Date(ts),now=new Date(),s=Math.floor((now-d)/1000);if(s<60)return'Just now';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return d.toLocaleDateString();}
-async function logActivity(action,module){if(!user)return;const name=user.user_metadata?.full_name||user.email?.split('@')[0]||'User';await sb.from('activity_log').insert({user_id:user.id,user_name:name,action,module,created_at:new Date().toISOString()}).catch(()=>{});}
+async function logActivity(action,module){if(!user)return;const name=user.user_metadata?.full_name||user.email?.split('@')[0]||'User';await sb.from('activity_log').insert({user_id:user.id,user_name:name,action,module,created_at:new Date().toISOString()});}
 async function loadNotifications(){const{data}=await sb.from('notifications').select('*').eq('user_id',user.id).order('created_at',{ascending:false}).limit(20);const notifs=data||[];const unread=notifs.filter(n=>!n.is_read).length;const badge=document.getElementById('notif-badge');badge.textContent=unread;badge.className='notif-badge'+(unread?' show':'');document.getElementById('notif-list').innerHTML=notifs.length?notifs.map(n=>'<div class="notif-item '+(n.is_read?'':'unread')+'" onclick="markRead('+JSON.stringify(n.id)+')"><div class="notif-item-title">'+(n.title||'Notification')+'</div><div class="notif-item-time">'+timeAgo(n.created_at)+'</div></div>').join(''):'<div class="notif-empty">No notifications</div>';}
-async function createNotif(title,message){if(!user)return;await sb.from('notifications').insert({user_id:user.id,title,message,is_read:false,created_at:new Date().toISOString()}).catch(()=>{});loadNotifications();}
+async function createNotif(title,message){if(!user)return;await sb.from('notifications').insert({user_id:user.id,title,message,is_read:false,created_at:new Date().toISOString()});loadNotifications();}
 function toggleNotif(){document.getElementById('notif-dropdown').classList.toggle('open');}
 async function markRead(id){await sb.from('notifications').update({is_read:true}).eq('id',id);loadNotifications();}
 async function markAllRead(){await sb.from('notifications').update({is_read:true}).eq('user_id',user.id);loadNotifications();}
@@ -276,10 +276,10 @@ async function loadReports(){
   const cc=['#6366F1','#10B981','#F59E0B','#EF4444'];
   function dk(id){const c=Chart.getChart(id);if(c)c.destroy();}
   const [lr,ir,tr,ar]=await Promise.all([
-    supabase.from('leads').select('status,deal_value,assigned_to,notes'),
-    supabase.from('invoices').select('amount,created_at'),
-    supabase.from('tickets').select('status'),
-    supabase.from('attendance').select('status')
+    sb.from('leads').select('status,deal_value,assigned_to,notes'),
+    sb.from('invoices').select('amount,created_at'),
+    sb.from('tickets').select('status'),
+    sb.from('attendance').select('status')
   ]);
   const leads=lr.data||[],invs=ir.data||[],ticks=tr.data||[],atts=ar.data||[];
   const totalRev=invs.reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
@@ -316,7 +316,7 @@ async function loadReports(){
 
 async function downloadInvoicePDF(invoiceId){
   if(typeof window.jspdf==='undefined'){alert('jsPDF not loaded yet, please wait a moment and try again.');return;}
-  const {data:inv,error}=await supabase.from('invoices').select('*').eq('id',invoiceId).single();
+  const {data:inv,error}=await sb.from('invoices').select('*').eq('id',invoiceId).single();
   if(error||!inv){alert('Invoice not found');return;}
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF();
@@ -367,7 +367,7 @@ async function checkSLABreaches(tickets){
   const banner=document.getElementById('sla-breach-banner');
   if(!banner)return;
   try{
-    const {data:clients}=await supabase.from('clients').select('name,sla_hours');
+    const {data:clients}=await sb.from('clients').select('name,sla_hours');
     const slaMap={};
     if(clients)clients.forEach(c=>{slaMap[c.name]=parseFloat(c.sla_hours)||24;});
     const now=new Date();
@@ -391,7 +391,7 @@ async function checkContractRenewals(){
   const listEl=document.getElementById('dash-renewal-list');
   if(!alertEl||!listEl)return;
   try{
-    const {data:contracts}=await supabase.from('contracts').select('title,end_date,status');
+    const {data:contracts}=await sb.from('contracts').select('title,end_date,status');
     const now=new Date();
     const in30=new Date(now.getTime()+30*24*3600*1000);
     const upcoming=(contracts||[]).filter(c=>{
@@ -409,14 +409,14 @@ async function loadAgentKPIs(){
   const grid=document.getElementById('agent-kpis-grid');
   if(!grid)return;
   try{
-    const {data:agents}=await supabase.from('users').select('id,full_name,email').eq('role','agent');
+    const {data:agents}=await sb.from('users').select('id,full_name,email').eq('role','agent');
     if(!agents||!agents.length){grid.innerHTML='<p style="color:var(--muted);font-size:14px">No agents found.</p>';return;}
     const now=new Date();
     const ms=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-01';
     const [tr,ar,tsr]=await Promise.all([
-      supabase.from('tickets').select('assigned_to,status'),
-      supabase.from('attendance').select('user_id,status,date').gte('date',ms),
-      supabase.from('timesheets').select('user_id,hours,date').gte('date',ms)
+      sb.from('tickets').select('assigned_to,status'),
+      sb.from('attendance').select('user_id,status,date').gte('date',ms),
+      sb.from('timesheets').select('user_id,hours,date').gte('date',ms)
     ]);
     const tix=tr.data||[],att=ar.data||[],ts=tsr.data||[];
     grid.innerHTML='';
